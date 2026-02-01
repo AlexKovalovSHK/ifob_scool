@@ -5,7 +5,7 @@ services:
     image: ifob_scool:latest
     container_name: ifob_scool
     ports:
-      - "5052:80"
+      - "5002:80"
     restart: unless-stopped
     environment:
       - TZ=Europe/Berlin

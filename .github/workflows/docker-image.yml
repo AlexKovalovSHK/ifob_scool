@@ -10,7 +10,7 @@ env:
   DOCKER_IMAGE: "ifob_scool"
   DEPLOY_DIR: "/root/ifob_scool/"
   CONTAINER_NAME: "ifob_scool"
-  HOST_PORT: "5051"
+  HOST_PORT: "5002"
   CONTAINER_PORT: "80"
 
 jobs:
