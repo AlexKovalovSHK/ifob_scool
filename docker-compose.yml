@@ -1,13 +1,7 @@
-version: '3.8'
-
 services:
-  web:
+  backend:
     image: ifob_scool:latest
     container_name: ifob_scool
     ports:
-      - "5002:80"
-    restart: unless-stopped
-    environment:
-      - TZ=Europe/Berlin
-    labels:
-      - "com.ifob_scool.description=IFOB School Landing Page"
+      - "3003:3003"
+    command: "nginx -g 'daemon off;'"
