@@ -1,17 +1,18 @@
-# Multi-stage build for optimized production image
+# 1️⃣ build stage
+FROM node:18-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# 2️⃣ nginx stage
 FROM nginx:alpine
-
-# Remove default nginx website
+# чистим старую html
 RUN rm -rf /usr/share/nginx/html/*
-
-# Copy website files to nginx html directory
-COPY . /usr/share/nginx/html
-
-# Copy custom nginx configuration (optional)
-# COPY nginx.conf /etc/nginx/nginx.conf
-
-# Expose port 80
+# копируем собранный фронт из build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+# копируем конфиг nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
-
-# Start nginx
 CMD ["nginx", "-g", "daemon off;"]
