@@ -7,15 +7,12 @@ import {
   Button,
   Paper,
   Link,
-  Avatar,
   CssBaseline,
 } from "@mui/material"
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import { useNavigate } from "react-router-dom"
 import TelegramLogin from "./TelegramLogin"
 import { userApi } from "../../features/auth/api"
 import { useDispatch } from "react-redux"
-import { User } from "../../features/users/type"
 import { setUser } from "../../features/users/userSlice"
 
 const isLocalhost =

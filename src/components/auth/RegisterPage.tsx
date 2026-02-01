@@ -7,13 +7,11 @@ import {
     Button,
     Paper,
     Link,
-    Avatar,
     CssBaseline,
  Grid, 
     Alert,
     CircularProgress
 } from '@mui/material';
-import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import { useNavigate } from 'react-router-dom';
 import TelegramLogin from './TelegramLogin'; // Импортируем наш компонент
 import { API_URL } from '../../config';
