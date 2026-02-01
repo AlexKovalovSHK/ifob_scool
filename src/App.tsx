@@ -9,6 +9,8 @@ import Videos from "./components/Videos"
 import LoginPage from "./components/auth/LoginPage"
 import RegisterPage from "./components/auth/RegisterPage"
 
+export const API_URL = import.meta.env.VITE_API_URL || 'https://stas-serv.shk.solutions'
+
 export const App = () => (
   <div className="App">
     <Header />

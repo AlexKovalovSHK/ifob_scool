@@ -13,6 +13,7 @@ import {
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import { useNavigate } from "react-router-dom"
 import TelegramLogin from "./TelegramLogin"
+import { API_URL } from "../../App"
 
 const isLocalhost =
   window.location.hostname === "localhost" ||
@@ -30,7 +31,7 @@ const LoginPage = () => {
   const handleTelegramAuth = async (user: any) => {
     try {
       // Отправляем данные на ваш бэкенд
-      const response = await fetch("https://your-api.com/auth/telegram", {
+      const response = await fetch(`${API_URL}/auth/telegram`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
