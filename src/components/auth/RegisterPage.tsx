@@ -40,7 +40,7 @@ const RegisterPage = () => {
         };
 
         try {
-            const response = await fetch(`${API_URL}api/v1/auth/registration`, {
+            const response = await fetch(`${API_URL}/auth/registration`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(registrationData),
@@ -72,7 +72,7 @@ const RegisterPage = () => {
         setError(null);
 
         try {
-            const response = await fetch(`${API_URL}api/v1/auth/telegram`, {
+            const response = await fetch(`${API_URL}/auth/telegram`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(tgData),
