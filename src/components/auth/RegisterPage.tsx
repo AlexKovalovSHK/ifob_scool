@@ -16,14 +16,12 @@ import {
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import { useNavigate } from 'react-router-dom';
 import TelegramLogin from './TelegramLogin'; // Импортируем наш компонент
+import { API_URL } from '../../App';
 
 const RegisterPage = () => {
     const navigate = useNavigate();
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-
-    // Базовый URL вашего API
-    const API_URL = 'https://api.ifob-scool.shk.solutions/api/v1';
 
     // 1. Логика обычной регистрации через форму
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -42,7 +40,7 @@ const RegisterPage = () => {
         };
 
         try {
-            const response = await fetch(`${API_URL}/auth/registration`, {
+            const response = await fetch(`${API_URL}api/v1/auth/registration`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(registrationData),
@@ -74,7 +72,7 @@ const RegisterPage = () => {
         setError(null);
 
         try {
-            const response = await fetch(`${API_URL}/auth/telegram`, {
+            const response = await fetch(`${API_URL}api/v1/auth/telegram`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(tgData),
