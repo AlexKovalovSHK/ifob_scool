@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import {
   Container,
   Box,
@@ -13,7 +13,10 @@ import {
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import { useNavigate } from "react-router-dom"
 import TelegramLogin from "./TelegramLogin"
-import { API_URL } from "../../App"
+import { userApi } from "../../features/auth/api"
+import { useDispatch } from "react-redux"
+import { User } from "../../features/users/type"
+import { setUser } from "../../features/users/userSlice"
 
 const isLocalhost =
   window.location.hostname === "localhost" ||
@@ -21,40 +24,45 @@ const isLocalhost =
 
 const LoginPage = () => {
   const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const dispatch = useDispatch()
+
+  // 1. Обычный логин
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    // Logic for login should go here
-    console.log("Login submitted")
+    setLoading(true)
+
+    const data = new FormData(event.currentTarget)
+    const email = data.get('email') as string
+    const password = data.get('password') as string
+
+    try {
+      const result = await userApi.login({ email, password })
+
+     localStorage.setItem("token", result.access_token);
+    localStorage.setItem("userId", result.user.id.toString()); // Сохраняем ID
+    dispatch(setUser(result.user)); // Сразу кладем юзера в стор
+    navigate("/");
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Ошибка входа")
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleTelegramAuth = async (user: any) => {
+  // 2. Логин через Telegram
+  const handleTelegramAuth = async (tgUser: any) => {
+    setLoading(true)
     try {
-      // Отправляем данные на ваш бэкенд
-      const response = await fetch(`${API_URL}/auth/telegram`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user), // Передаем всё, что дал Telegram (id, hash, и т.д.)
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-
-        // 1. Сохраняем токен (например, JWT), который прислал бэкенд
-        localStorage.setItem("token", data.token)
-
-        // 2. Обновляем состояние в Redux (если используете)
-        // dispatch(setUser(data.user));
-
-        // 3. Уходим на главную
-        navigate("/")
-      } else {
-        alert("Ошибка авторизации на сервере")
-      }
-    } catch (error) {
-      console.error("Ошибка при запросе к бэкенду:", error)
+      const result = await userApi.loginWithTelegram(tgUser)
+      localStorage.setItem("token", result.access_token)
+      navigate("/")
+    } catch (error: any) {
+      console.error("Telegram Auth Error:", error)
+      alert("Ошибка авторизации через Telegram")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -81,9 +89,6 @@ const LoginPage = () => {
             backdropFilter: "blur(10px)",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
           <Typography component="h1" variant="h5" sx={{ fontWeight: 700 }}>
             Sign In
           </Typography>
@@ -117,16 +122,10 @@ const LoginPage = () => {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{
-                mt: 3,
-                mb: 2,
-                py: 1.5,
-                borderRadius: 2,
-                fontSize: "1rem",
-                textTransform: "none",
-              }}
+              disabled={loading}
+              sx={{ mt: 3, mb: 2, py: 1.5 }}
             >
-              Sign In
+              {loading ? "Signing In..." : "Sign In"}
             </Button>
             {!isLocalhost && (
               <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
@@ -154,3 +153,5 @@ const LoginPage = () => {
 }
 
 export default LoginPage
+
+

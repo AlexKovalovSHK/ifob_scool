@@ -16,7 +16,7 @@ import {
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 import { useNavigate } from 'react-router-dom';
 import TelegramLogin from './TelegramLogin'; // Импортируем наш компонент
-import { API_URL } from '../../App';
+import { API_URL } from '../../config';
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -40,7 +40,7 @@ const RegisterPage = () => {
         };
 
         try {
-            const response = await fetch(`${API_URL}/auth/registration`, {
+            const response = await fetch(`${API_URL}auth/registration`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(registrationData),
@@ -95,13 +95,10 @@ const RegisterPage = () => {
     };
 
     return (
-        <Container component="main" maxWidth="xs">
+        <Container component="main" maxWidth="sm">
             <CssBaseline />
             <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Paper elevation={6} sx={{ p: 4, display: 'flex', flexDirection: 'column', alignItems: 'center', borderRadius: 3 }}>
-                    <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
-                        <PersonAddOutlinedIcon />
-                    </Avatar>
                     <Typography component="h1" variant="h5" sx={{ fontWeight: 700 }}>
                         Sign Up
                     </Typography>

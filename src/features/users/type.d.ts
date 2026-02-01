@@ -1,5 +1,5 @@
 export interface User {
-    id: number;
+    id: string;
     name: string;
     surname: string;
     email: string;
@@ -27,6 +27,7 @@ export interface UserRegister {
 
 // Для обновления профиля (включая привязку Telegram)
 export interface UserUpdate {
+    id: string;
     name?: string;
     surname?: string;
     email?: string;
