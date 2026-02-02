@@ -35,6 +35,7 @@ const PayPalWrapper = ({ coursePrice, onPaymentSuccess }: { coursePrice: number;
         createOrder={async () => {
           const res = await fetch('https://stas-serv.shk.solutions/payments/create-order', {
             method: 'POST',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ price: coursePrice }),
           });
@@ -44,6 +45,7 @@ const PayPalWrapper = ({ coursePrice, onPaymentSuccess }: { coursePrice: number;
         onApprove={async (data) => {
           const res = await fetch('https://stas-serv.shk.solutions/payments/capture-order', {
             method: 'POST',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ orderId: data.orderID }),
           });
@@ -132,7 +134,7 @@ export const BuyBackComponent = () => {
   }
 
   return (
-    <PayPalScriptProvider options={{ clientId: 'YOUR_SANDBOX_CLIENT_ID', currency: 'USD' }}>
+    <PayPalScriptProvider options={{ clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID, currency: 'USD' }}>
       <Container sx={{ py: 4 }} maxWidth="md">
         <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 3 }}>
           <Link component={RouterLink} underline="hover" color="inherit" to="/courses">
