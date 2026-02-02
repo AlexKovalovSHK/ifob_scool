@@ -17,6 +17,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { PayPalButtons, PayPalScriptProvider, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { Course } from '../../features/courses/type';
+import { PayPalButton } from '../payments/PayPalButton';
 
 // This is a helper component to manage the loading state of the PayPal script
 const PayPalWrapper = ({ amount, onSuccess }: { amount: string, onSuccess: (details: any) => void }) => {
