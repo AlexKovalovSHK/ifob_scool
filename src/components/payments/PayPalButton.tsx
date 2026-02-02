@@ -4,10 +4,13 @@ import {
   PayPalScriptProvider,
 } from "@paypal/react-paypal-js";
 import { paymentsApi } from "../../features/payments/paymentsApi";
+import { useAppSelector } from "../../app/hooks";
+import { selectUser } from "../../features/users/userSlice";
 
 const CLIENT_ID = import.meta.env.VITE_PAYPAL_CLIENT_ID
 
 export function PayPalButton({ price = 49.99 }: { price?: number }) {
+  const currentUser = useAppSelector(selectUser);
   return (
     <PayPalScriptProvider
       options={{
@@ -29,16 +32,12 @@ export function PayPalButton({ price = 49.99 }: { price?: number }) {
         }}
         onApprove={async (data) => {
           try {
-            await paymentsApi.captureOrder(data.orderID);
-            // здесь можно:
-            // 1. Показать тост/модалку "Успех!"
-            // 2. Перенаправить на страницу успеха
-            // 3. Обновить состояние приложения (useQuery invalidate, zustand/redux и т.д.)
-            alert("Оплата успешна 🎉");
-          } catch (err) {
-            console.error("Ошибка подтверждения оплаты:", err);
-            alert("Не удалось подтвердить оплату. Свяжитесь с поддержкой.");
-          }
+        // userId и courseId должны быть доступны в этом контексте
+        const details = await paymentsApi.captureOrder(data.orderID, currentUser.id, '69808740302c171c1a5d5e22');
+        //onPaymentSuccess(details);
+    } catch (error) {
+        console.error("Ошибка подтверждения оплаты", error);
+    }
         }}
         onError={(err) => {
           console.error("PayPal ошибка:", err);

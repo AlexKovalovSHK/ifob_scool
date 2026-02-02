@@ -2,21 +2,25 @@
 import $api from "../auth/api";
 
 interface CreateOrderResponse {
-  id: string;
+    id: string;
 }
 
 interface CaptureOrderResponse {
-  status: string;
+    status: string;
 }
 
 export const paymentsApi = {
-  async createOrder(price: number): Promise<CreateOrderResponse> {
-    const { data } = await $api.post<CreateOrderResponse>("/payments/create-order", { price });
-    return data;
-  },
+    async createOrder(price: number): Promise<CreateOrderResponse> {
+        const { data } = await $api.post<CreateOrderResponse>("/payments/create-order", { price });
+        return data;
+    },
 
-  async captureOrder(orderId: string): Promise<CaptureOrderResponse> {
-    const { data } = await $api.post<CaptureOrderResponse>("/payments/capture-order", { orderId });
-    return data;
-  },
+    async captureOrder(orderId: string, userId: string, courseId: string) {
+        const { data } = await $api.post("/payments/capture-order", {
+            orderId,
+            userId,
+            courseId
+        });
+        return data;
+    },
 };
