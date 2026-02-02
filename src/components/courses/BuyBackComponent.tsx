@@ -15,17 +15,20 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { PayPalButtons, PayPalScriptProvider, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import { PayPalButtons, PayPalScriptProvider, usePayPalScriptReducer,  } from "@paypal/react-paypal-js";
 import { Course } from '../../features/courses/type';
 import { CLIENT_ID } from '../../utils/utils';
 import axios from 'axios'; 
 import { paymentsApi } from '../../features/payments/paymentsApi';
+import { useAppSelector } from '../../app/hooks'
+import { selectUser } from '../../features/users/userSlice';
 
 /**
  * Обертка для кнопок PayPal
  */
 const PayPalWrapper = ({ coursePrice, onPaymentSuccess }: { coursePrice: number; onPaymentSuccess: (details: any) => void }) => {
     const [{ isPending }] = usePayPalScriptReducer();
+    const currentUser = useAppSelector(selectUser);
 
     return (
         <Box sx={{ mt: 3, position: 'relative', minHeight: 150 }}>
@@ -50,7 +53,7 @@ const PayPalWrapper = ({ coursePrice, onPaymentSuccess }: { coursePrice: number;
                 onApprove={async (data) => {
                     try {
                         // Используем ваш axios-сервис для захвата оплаты
-                        const details = await paymentsApi.captureOrder(data.orderID);
+                        const details = await paymentsApi.captureOrder(data.orderID, currentUser.id, '69808740302c171c1a5d5e22');
                         onPaymentSuccess(details);
                     } catch (error) {
                         console.error("Ошибка PayPal (Capture Order):", error);
