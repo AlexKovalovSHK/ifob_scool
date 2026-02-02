@@ -17,6 +17,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { PayPalButtons, PayPalScriptProvider, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { Course } from '../../features/courses/type';
+import { CLIENT_ID } from '../../utils/utils';
 
 // PayPalWrapper остаётся без изменений
 const PayPalWrapper = ({ coursePrice, onPaymentSuccess }: { coursePrice: number; onPaymentSuccess: (details: any) => void }) => {
@@ -134,7 +135,7 @@ export const BuyBackComponent = () => {
   }
 
   return (
-    <PayPalScriptProvider options={{ clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID, currency: 'USD' }}>
+    <PayPalScriptProvider options={{ clientId: atob(CLIENT_ID), currency: 'USD' }}>
       <Container sx={{ py: 4 }} maxWidth="md">
         <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 3 }}>
           <Link component={RouterLink} underline="hover" color="inherit" to="/courses">
