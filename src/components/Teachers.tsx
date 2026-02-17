@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import {
   Container,
@@ -16,45 +15,61 @@ import {
   ListItemText,
   ListItemButton,
 } from "@mui/material"
-import { Teacher, Course } from "../features/courses/type"
+import { useQuery } from "@tanstack/react-query"
+import { fechTeachersList } from "../features/teachers/teachersApi"
+import { fechCoursesList } from "../features/courses/coursesApi"
 
 const Teachers = () => {
-  const [teachers, setTeachers] = useState<Teacher[]>([])
-  const [courses, setCourses] = useState<Course[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
 
-  useEffect(() => {
-    Promise.all([
-      fetch("/teachers.json").then((res) => res.json()),
-      fetch("/courses.json").then((res) => res.json()),
-    ])
-      .then(([teachersData, coursesData]) => {
-        setTeachers(teachersData)
-        setCourses(coursesData)
-        setLoading(false)
-      })
-      .catch((err) => {
-        console.error("Failed to fetch data:", err)
-        setError("Ошибка при загрузке данных преподавателей")
-        setLoading(false)
-      })
-  }, [])
+  // 1. Запрос списка преподавателей
+  const {
+    data: teachers = [],
+    isLoading: isTeachersLoading,
+    isError: isTeachersError,
+  } = useQuery({
+    queryKey: ["teachers"],
+    queryFn: fechTeachersList,
+  })
 
-  if (loading) {
+  // 2. Запрос списка курсов (чтобы сопоставить их с учителями)
+  const {
+    data: courses = [],
+    isLoading: isCoursesLoading,
+    isError: isCoursesError,
+  } = useQuery({
+    queryKey: ["courses"],
+    queryFn: fechCoursesList,
+  })
+
+  // 3. Обработка состояния загрузки
+  if (isTeachersLoading || isCoursesLoading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="50vh"
+      >
         <CircularProgress />
       </Box>
     )
   }
 
-  if (error) {
+  // 4. Обработка ошибок
+  if (isTeachersError || isCoursesError) {
     return (
       <Container sx={{ py: 8 }}>
-        <Typography color="error" align="center" variant="h5">
-          {error}
+        <Typography
+          color="error"
+          align="center"
+          variant="h5"
+          sx={{ fontWeight: 700 }}
+        >
+          Произошла ошибка при загрузке данных.
+        </Typography>
+        <Typography align="center" color="text.secondary">
+          Пожалуйста, попробуйте позже.
         </Typography>
       </Container>
     )
@@ -76,15 +91,20 @@ const Teachers = () => {
         color="text.secondary"
         sx={{ mb: 8, maxWidth: "800px", mx: "auto" }}
       >
-        Познакомьтесь с нашими экспертами, которые помогут вам достичь новых высот в музыкальном искусстве.
+        Познакомьтесь с нашими экспертами, которые помогут вам достичь новых
+        высот в музыкальном искусстве.
       </Typography>
 
       <Grid container spacing={4}>
-        {teachers.map((teacher) => {
-          const teacherCourses = courses.filter((c) => c.author === teacher.name)
+        {teachers.map(teacher => {
+          // Фильтруем курсы конкретного преподавателя
+          // Важно: проверяем либо по ID (лучше), либо по имени (как было у вас)
+          const teacherCourses = courses.filter(
+            c => c.authorId === teacher.id || c.author === teacher.name,
+          )
 
           return (
-            <Grid key={teacher.id} size={{ xs: 12, md: 6 }}>
+            <Grid key={teacher.id} size={{ xs: 12, sm: 6 }}>
               <Card
                 sx={{
                   height: "100%",
@@ -106,11 +126,18 @@ const Teachers = () => {
                     height: { xs: 240, sm: "auto" },
                     objectFit: "cover",
                   }}
-                  image={teacher.image}
+                  image={
+                    teacher.image ||
+                    "https://via.placeholder.com/240x300?text=No+Photo"
+                  }
                   alt={teacher.name}
                 />
                 <CardContent sx={{ flex: 1, p: 3 }}>
-                  <Typography variant="h5" component="div" sx={{ fontWeight: 700, mb: 1 }}>
+                  <Typography
+                    variant="h5"
+                    component="div"
+                    sx={{ fontWeight: 700, mb: 1 }}
+                  >
                     {teacher.name}
                   </Typography>
                   <Chip
@@ -119,21 +146,30 @@ const Teachers = () => {
                     size="small"
                     sx={{ mb: 2, fontWeight: 600, bgcolor: "#1a237e" }}
                   />
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2, lineHeight: 1.6 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 2, lineHeight: 1.6 }}
+                  >
                     {teacher.bio}
                   </Typography>
 
                   <Divider sx={{ my: 2 }} />
 
-                  <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1 }}>
-                    Курсы:
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ fontWeight: 700, mb: 1 }}
+                  >
+                    Курсы преподавателя:
                   </Typography>
                   <List dense disablePadding>
                     {teacherCourses.length > 0 ? (
-                      teacherCourses.map((course) => (
+                      teacherCourses.map(course => (
                         <ListItem key={course.id} sx={{ px: 0, py: 0.2 }}>
                           <ListItemButton
-                            onClick={() => navigate(`/courses/${course.id}/modules`)}
+                            onClick={() =>
+                              navigate(`/courses/${course.id}/modules`)
+                            }
                             sx={{
                               borderRadius: 2,
                               "&:hover": {

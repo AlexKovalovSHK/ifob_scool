@@ -38,9 +38,10 @@ export interface Module {
 
 export interface Teacher {
   id: string
+  email: string
   name: string
   bio: string
-  image: string
+  image?: string
   specialization: string
 }
 
@@ -67,7 +68,8 @@ export interface NewModuleDto {
 
 export interface NewTeacherDto {
   name: string
-  specialization: string
+  email: string
   bio: string
-  image: string
+  specialization: string
+  image?: string
 }

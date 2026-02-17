@@ -13,54 +13,18 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  TextField,
   Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Alert,
   Snackbar,
-  CircularProgress,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Collapse,
 } from "@mui/material"
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar"
 import MenuIcon from "@mui/icons-material/Menu"
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft"
 import ChevronRightIcon from "@mui/icons-material/ChevronRight"
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline"
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks"
 import PeopleIcon from "@mui/icons-material/People"
-import DeleteIcon from "@mui/icons-material/Delete"
-import VisibilityIcon from "@mui/icons-material/Visibility"
-import HomeIcon from "@mui/icons-material/Home" // Импорт иконки дома
-import { useNavigate } from "react-router-dom" // Импорт навигации
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import {
-  fechCoursesList,
-  fechNewCourse,
-  deleteCourse,
-  fechCourseById,
-} from "../../features/courses/coursesApi"
-import {
-  NewCourseDto,
-  Course,
-  Teacher,
-  NewTeacherDto,
-} from "../../features/courses/type"
-import CourseDetailModal from "./CourseDetailModal"
-import {
-  fechAddTeacher,
-  fechDeleteTeacher,
-  fechTeachersList,
-} from "../../features/teachers/teachersApi"
+import HomeIcon from "@mui/icons-material/Home" 
+import { useNavigate } from "react-router-dom" 
 import TeachersBoxComponent from "./TeachersBoxComponent"
 import CourseBoxComponent from "./CourseBoxComponent"
 
@@ -126,8 +90,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
 export default function AdminComponent() {
   const theme = useTheme()
-  const navigate = useNavigate() // Инициализация навигации
-  const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const [open, setOpen] = React.useState(false)
   const [successMsg, setSuccessMsg] = React.useState("")
   const [errorMsg, setErrorMsg] = React.useState("")
@@ -136,137 +99,10 @@ export default function AdminComponent() {
     "courses",
   )
 
-  // Modal state
-  const [selectedCourseId, setSelectedCourseId] = React.useState<string | null>(
-    null,
-  )
-  const [isModalOpen, setIsModalOpen] = React.useState(false)
-
-  // Course form state
-  const [courseData, setCourseData] = React.useState<NewCourseDto>({
-    title: "",
-    slug: "",
-    description: "",
-    priceAmount: 0,
-    authorId: "",
-    note: "",
-  })
-
-  // Teacher form state
-  const [teacherData, setTeacherData] = React.useState<NewTeacherDto>({
-    name: "",
-    specialization: "",
-    bio: "",
-    image: "",
-  })
-
-  // Queries
-  const { data: teachers } = useQuery({
-    queryKey: ["teachers"],
-    queryFn: fechTeachersList,
-  })
-
-  const { data: teachersList, isLoading: isTeachersLoading } = useQuery({
-    queryKey: ["teachers"],
-    queryFn: fechTeachersList,
-  })
-
-  const { data: courses, isLoading: isCoursesLoading } = useQuery({
-    queryKey: ["courses"],
-    queryFn: fechCoursesList,
-  })
-
-  const { data: selectedCourse } = useQuery<Course>({
-    queryKey: ["course-simple", selectedCourseId],
-    queryFn: () => fechCourseById(selectedCourseId!),
-    enabled: !!selectedCourseId,
-  })
-
-  // Mutations
-  const createCourseMutation = useMutation({
-    mutationFn: fechNewCourse,
-    onSuccess: () => {
-      setSuccessMsg("Course created successfully!")
-      setCourseData({
-        title: "",
-        slug: "",
-        description: "",
-        priceAmount: 0,
-        authorId: "",
-        note: "",
-      })
-      queryClient.invalidateQueries({ queryKey: ["courses"] })
-    },
-    onError: error =>
-      setErrorMsg(
-        "Failed to create course: " +
-          (error instanceof Error ? error.message : "Unknown error"),
-      ),
-  })
-
-  const deleteCourseMutation = useMutation({
-    mutationFn: deleteCourse,
-    onSuccess: () => {
-      setSuccessMsg("Course deleted successfully!")
-      queryClient.invalidateQueries({ queryKey: ["courses"] })
-    },
-    onError: error =>
-      setErrorMsg(
-        "Failed to delete course: " +
-          (error instanceof Error ? error.message : "Unknown error"),
-      ),
-  })
-
-  const createTeacherMutation = useMutation({
-    mutationFn: fechAddTeacher,
-    onSuccess: () => {
-      setSuccessMsg("Teacher added successfully!")
-      setTeacherData({ name: "", specialization: "", bio: "", image: "" })
-      queryClient.invalidateQueries({ queryKey: ["teachers"] })
-      setShowCreateForm(false)
-    },
-    onError: error =>
-      setErrorMsg(
-        "Failed to add teacher: " +
-          (error instanceof Error ? error.message : "Unknown error"),
-      ),
-  })
-
-  const deleteTeacherMutation = useMutation({
-    mutationFn: fechDeleteTeacher,
-    onSuccess: () => {
-      setSuccessMsg("Teacher deleted successfully!")
-      queryClient.invalidateQueries({ queryKey: ["teachers"] })
-    },
-    onError: error =>
-      setErrorMsg(
-        "Failed to delete teacher: " +
-          (error instanceof Error ? error.message : "Unknown error"),
-      ),
-  })
+ 
 
   const handleDrawerOpen = () => setOpen(true)
   const handleDrawerClose = () => setOpen(false)
-
-  const handleCreateCourse = (e: React.FormEvent) => {
-    e.preventDefault()
-    createCourseMutation.mutate(courseData)
-  }
-
-  const handleCreateTeacher = (e: React.FormEvent) => {
-    e.preventDefault()
-    createTeacherMutation.mutate(teacherData)
-  }
-
-  const handleOpenCourseModal = (id: string) => {
-    setSelectedCourseId(id)
-    setIsModalOpen(true)
-  }
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false)
-    setSelectedCourseId(null)
-  }
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -369,14 +205,6 @@ export default function AdminComponent() {
             <TeachersBoxComponent />
           )}
         </div>
-
-        <CourseDetailModal
-          open={isModalOpen}
-          onClose={handleCloseModal}
-          course={selectedCourse || null}
-          onSuccess={setSuccessMsg}
-          onError={setErrorMsg}
-        />
 
         <Snackbar
           open={!!successMsg}
