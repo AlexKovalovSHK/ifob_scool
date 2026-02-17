@@ -4,6 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import AdminModalData from '../modals/AdminModalData';
 
 interface ImgMediaCardProps {
   image?: string;
@@ -45,14 +46,15 @@ export default function ImgMediaCard({
         >
           Смотреть
         </Button>
-        <Button
+        {/*<Button
           size="small"
           variant="contained"
           sx={{ textTransform: 'none', fontWeight: 600 }}
           onClick={onBuy}
         >
           Приобрести
-        </Button>
+        </Button>*/}
+        <AdminModalData/>
       </CardActions>
     </Card>
   );

@@ -1,8 +1,15 @@
 import { useNavigate } from "react-router-dom"
-import { Grid, Typography, Container, CircularProgress, Box } from "@mui/material"
+import {
+  Grid,
+  Typography,
+  Container,
+  CircularProgress,
+  Box,
+} from "@mui/material"
 import { useQuery } from "@tanstack/react-query"
 import ImgMediaCard from "../ImgMediaCard"
 import { fechCoursesList } from "../../features/courses/coursesApi"
+import { generateRandImgUrl } from "../../utils/utils"
 
 const Courses = () => {
   const navigate = useNavigate()
@@ -18,7 +25,12 @@ const Courses = () => {
 
   if (isLoading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="50vh"
+      >
         <CircularProgress />
       </Box>
     )
@@ -28,7 +40,9 @@ const Courses = () => {
     return (
       <Container>
         <Typography color="error" align="center" variant="h5" sx={{ mt: 4 }}>
-          {error instanceof Error ? error.message : "Ошибка при загрузке курсов"}
+          {error instanceof Error
+            ? error.message
+            : "Ошибка при загрузке курсов"}
         </Typography>
       </Container>
     )
@@ -45,10 +59,10 @@ const Courses = () => {
         Наши курсы
       </Typography>
       <Grid container spacing={4}>
-        {courses?.map((course) => (
+        {courses?.map(course => (
           <Grid key={course.id} size={{ xs: 12, sm: 6, md: 4 }}>
             <ImgMediaCard
-              image={course.image || "https://picsum.photos/300/300?random=103"}
+              image={generateRandImgUrl(400, 250, course.id.toString())}
               title={course.title}
               description={course.description}
               onView={() => navigate(`/courses/${course.id}/modules`)}

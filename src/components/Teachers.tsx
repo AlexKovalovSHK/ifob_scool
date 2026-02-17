@@ -18,6 +18,7 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { fechTeachersList } from "../features/teachers/teachersApi"
 import { fechCoursesList } from "../features/courses/coursesApi"
+import { generateRandImgUrl } from "../utils/utils"
 
 const Teachers = () => {
   const navigate = useNavigate()
@@ -127,8 +128,9 @@ const Teachers = () => {
                     objectFit: "cover",
                   }}
                   image={
-                    teacher.image ||
-                    "https://via.placeholder.com/240x300?text=No+Photo"
+                    teacher.image && teacher.image.trim() !== ""
+                      ? teacher.image
+                      : generateRandImgUrl(240, 300, teacher.id.toString())
                   }
                   alt={teacher.name}
                 />
