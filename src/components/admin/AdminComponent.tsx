@@ -1,32 +1,77 @@
-import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import * as React from "react"
+import { styled, useTheme } from "@mui/material/styles"
+import {
+  Box,
+  Drawer,
+  CssBaseline,
+  Toolbar,
+  List,
+  Typography,
+  Divider,
+  IconButton,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  TextField,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Alert,
+  Snackbar,
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Collapse,
+} from "@mui/material"
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar"
+import MenuIcon from "@mui/icons-material/Menu"
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft"
+import ChevronRightIcon from "@mui/icons-material/ChevronRight"
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline"
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks"
+import PeopleIcon from "@mui/icons-material/People"
+import DeleteIcon from "@mui/icons-material/Delete"
+import VisibilityIcon from "@mui/icons-material/Visibility"
+import HomeIcon from "@mui/icons-material/Home" // Импорт иконки дома
+import { useNavigate } from "react-router-dom" // Импорт навигации
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import {
+  fechCoursesList,
+  fechNewCourse,
+  deleteCourse,
+  fechCourseById,
+} from "../../features/courses/coursesApi"
+import {
+  NewCourseDto,
+  Course,
+  Teacher,
+  NewTeacherDto,
+} from "../../features/courses/type"
+import CourseDetailModal from "./CourseDetailModal"
+import {
+  fechAddTeacher,
+  fechDeleteTeacher,
+  fechTeachersList,
+} from "../../features/teachers/teachersApi"
+import TeachersBoxComponent from "./TeachersBoxComponent"
+import CourseBoxComponent from "./CourseBoxComponent"
 
-const drawerWidth = 240;
+const drawerWidth = 240
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
-  open?: boolean;
+const Main = styled("main", { shouldForwardProp: prop => prop !== "open" })<{
+  open?: boolean
 }>(({ theme }) => ({
   flexGrow: 1,
   padding: theme.spacing(3),
-  transition: theme.transitions.create('margin', {
+  transition: theme.transitions.create("margin", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
@@ -35,7 +80,7 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
     {
       props: ({ open }) => open,
       style: {
-        transition: theme.transitions.create('margin', {
+        transition: theme.transitions.create("margin", {
           easing: theme.transitions.easing.easeOut,
           duration: theme.transitions.duration.enteringScreen,
         }),
@@ -43,16 +88,16 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
       },
     },
   ],
-}));
+}))
 
 interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
+  open?: boolean
 }
 
 const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
+  shouldForwardProp: prop => prop !== "open",
 })<AppBarProps>(({ theme }) => ({
-  transition: theme.transitions.create(['margin', 'width'], {
+  transition: theme.transitions.create(["margin", "width"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
@@ -62,38 +107,169 @@ const AppBar = styled(MuiAppBar, {
       style: {
         width: `calc(100% - ${drawerWidth}px)`,
         marginLeft: `${drawerWidth}px`,
-        transition: theme.transitions.create(['margin', 'width'], {
+        transition: theme.transitions.create(["margin", "width"], {
           easing: theme.transitions.easing.easeOut,
           duration: theme.transitions.duration.enteringScreen,
         }),
       },
     },
   ],
-}));
+}))
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
-  justifyContent: 'flex-end',
-}));
+  justifyContent: "flex-end",
+}))
 
 export default function AdminComponent() {
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const theme = useTheme()
+  const navigate = useNavigate() // Инициализация навигации
+  const queryClient = useQueryClient()
+  const [open, setOpen] = React.useState(false)
+  const [successMsg, setSuccessMsg] = React.useState("")
+  const [errorMsg, setErrorMsg] = React.useState("")
+  const [showCreateForm, setShowCreateForm] = React.useState(false)
+  const [currentTab, setCurrentTab] = React.useState<"courses" | "teachers">(
+    "courses",
+  )
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
+  // Modal state
+  const [selectedCourseId, setSelectedCourseId] = React.useState<string | null>(
+    null,
+  )
+  const [isModalOpen, setIsModalOpen] = React.useState(false)
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
+  // Course form state
+  const [courseData, setCourseData] = React.useState<NewCourseDto>({
+    title: "",
+    slug: "",
+    description: "",
+    priceAmount: 0,
+    authorId: "",
+    note: "",
+  })
+
+  // Teacher form state
+  const [teacherData, setTeacherData] = React.useState<NewTeacherDto>({
+    name: "",
+    specialization: "",
+    bio: "",
+    image: "",
+  })
+
+  // Queries
+  const { data: teachers } = useQuery({
+    queryKey: ["teachers"],
+    queryFn: fechTeachersList,
+  })
+
+  const { data: teachersList, isLoading: isTeachersLoading } = useQuery({
+    queryKey: ["teachers"],
+    queryFn: fechTeachersList,
+  })
+
+  const { data: courses, isLoading: isCoursesLoading } = useQuery({
+    queryKey: ["courses"],
+    queryFn: fechCoursesList,
+  })
+
+  const { data: selectedCourse } = useQuery<Course>({
+    queryKey: ["course-simple", selectedCourseId],
+    queryFn: () => fechCourseById(selectedCourseId!),
+    enabled: !!selectedCourseId,
+  })
+
+  // Mutations
+  const createCourseMutation = useMutation({
+    mutationFn: fechNewCourse,
+    onSuccess: () => {
+      setSuccessMsg("Course created successfully!")
+      setCourseData({
+        title: "",
+        slug: "",
+        description: "",
+        priceAmount: 0,
+        authorId: "",
+        note: "",
+      })
+      queryClient.invalidateQueries({ queryKey: ["courses"] })
+    },
+    onError: error =>
+      setErrorMsg(
+        "Failed to create course: " +
+          (error instanceof Error ? error.message : "Unknown error"),
+      ),
+  })
+
+  const deleteCourseMutation = useMutation({
+    mutationFn: deleteCourse,
+    onSuccess: () => {
+      setSuccessMsg("Course deleted successfully!")
+      queryClient.invalidateQueries({ queryKey: ["courses"] })
+    },
+    onError: error =>
+      setErrorMsg(
+        "Failed to delete course: " +
+          (error instanceof Error ? error.message : "Unknown error"),
+      ),
+  })
+
+  const createTeacherMutation = useMutation({
+    mutationFn: fechAddTeacher,
+    onSuccess: () => {
+      setSuccessMsg("Teacher added successfully!")
+      setTeacherData({ name: "", specialization: "", bio: "", image: "" })
+      queryClient.invalidateQueries({ queryKey: ["teachers"] })
+      setShowCreateForm(false)
+    },
+    onError: error =>
+      setErrorMsg(
+        "Failed to add teacher: " +
+          (error instanceof Error ? error.message : "Unknown error"),
+      ),
+  })
+
+  const deleteTeacherMutation = useMutation({
+    mutationFn: fechDeleteTeacher,
+    onSuccess: () => {
+      setSuccessMsg("Teacher deleted successfully!")
+      queryClient.invalidateQueries({ queryKey: ["teachers"] })
+    },
+    onError: error =>
+      setErrorMsg(
+        "Failed to delete teacher: " +
+          (error instanceof Error ? error.message : "Unknown error"),
+      ),
+  })
+
+  const handleDrawerOpen = () => setOpen(true)
+  const handleDrawerClose = () => setOpen(false)
+
+  const handleCreateCourse = (e: React.FormEvent) => {
+    e.preventDefault()
+    createCourseMutation.mutate(courseData)
+  }
+
+  const handleCreateTeacher = (e: React.FormEvent) => {
+    e.preventDefault()
+    createTeacherMutation.mutate(teacherData)
+  }
+
+  const handleOpenCourseModal = (id: string) => {
+    setSelectedCourseId(id)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setSelectedCourseId(null)
+  }
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
         <Toolbar>
@@ -102,27 +278,35 @@ export default function AdminComponent() {
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
-            sx={[
-              {
-                mr: 2,
-              },
-              open && { display: 'none' },
-            ]}
+            sx={[{ mr: 2 }, open && { display: "none" }]}
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Persistent drawer
+
+          {/* Добавлен sx={{ flexGrow: 1 }}, чтобы кнопка справа ушла в край */}
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+            {currentTab === "courses" ? "Админ: Курсы" : "Админ: Преподаватели"}
           </Typography>
+
+          {/* Кнопка перемещения на главную */}
+          <Button
+            color="inherit"
+            startIcon={<HomeIcon />}
+            onClick={() => navigate("/")}
+            sx={{ fontWeight: 600 }}
+          >
+            На главную
+          </Button>
         </Toolbar>
       </AppBar>
+
       <Drawer
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          '& .MuiDrawer-paper': {
+          "& .MuiDrawer-paper": {
             width: drawerWidth,
-            boxSizing: 'border-box',
+            boxSizing: "border-box",
           },
         }}
         variant="persistent"
@@ -131,66 +315,88 @@ export default function AdminComponent() {
       >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            {theme.direction === "ltr" ? (
+              <ChevronLeftIcon />
+            ) : (
+              <ChevronRightIcon />
+            )}
           </IconButton>
         </DrawerHeader>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+          <ListItem disablePadding>
+            <ListItemButton
+              selected={currentTab === "courses"}
+              onClick={() => {
+                setCurrentTab("courses")
+                setOpen(false)
+                setShowCreateForm(false)
+              }}
+            >
+              <ListItemIcon>
+                <LibraryBooksIcon
+                  color={currentTab === "courses" ? "primary" : "inherit"}
+                />
+              </ListItemIcon>
+              <ListItemText primary="Курсы" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton
+              selected={currentTab === "teachers"}
+              onClick={() => {
+                setCurrentTab("teachers")
+                setOpen(false)
+                setShowCreateForm(false)
+              }}
+            >
+              <ListItemIcon>
+                <PeopleIcon
+                  color={currentTab === "teachers" ? "primary" : "inherit"}
+                />
+              </ListItemIcon>
+              <ListItemText primary="Преподаватели" />
+            </ListItemButton>
+          </ListItem>
         </List>
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
-        <Typography sx={{ marginBottom: 2 }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-          tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-          enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-          imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-          Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-          Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-          adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-          nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-          leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-          feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-          consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-          sapien faucibus et molestie ac.
-        </Typography>
-        <Typography sx={{ marginBottom: 2 }}>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
-          eget nulla facilisi etiam dignissim diam. Pulvinar elementum integer enim
-          neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus sed viverra
-          tellus. Purus sit amet volutpat consequat mauris. Elementum eu facilisis
-          sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi
-          tincidunt ornare massa eget egestas purus viverra accumsan in. In hendrerit
-          gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem
-          et tortor. Habitant morbi tristique senectus et. Adipiscing elit duis
-          tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-          eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-          posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
+        <div className="container">
+          {currentTab === "courses" ? (
+            <CourseBoxComponent />
+          ) : (
+            <TeachersBoxComponent />
+          )}
+        </div>
+
+        <CourseDetailModal
+          open={isModalOpen}
+          onClose={handleCloseModal}
+          course={selectedCourse || null}
+          onSuccess={setSuccessMsg}
+          onError={setErrorMsg}
+        />
+
+        <Snackbar
+          open={!!successMsg}
+          autoHideDuration={4000}
+          onClose={() => setSuccessMsg("")}
+        >
+          <Alert severity="success" sx={{ width: "100%" }}>
+            {successMsg}
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={!!errorMsg}
+          autoHideDuration={4000}
+          onClose={() => setErrorMsg("")}
+        >
+          <Alert severity="error" sx={{ width: "100%" }}>
+            {errorMsg}
+          </Alert>
+        </Snackbar>
       </Main>
     </Box>
-  );
+  )
 }

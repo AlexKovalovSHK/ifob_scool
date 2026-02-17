@@ -1,32 +1,22 @@
-import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Grid, Typography, Container, CircularProgress, Box } from "@mui/material"
+import { useQuery } from "@tanstack/react-query"
 import ImgMediaCard from "../ImgMediaCard"
-import { Course } from "../../features/courses/type"
+import { fechCoursesList } from "../../features/courses/coursesApi"
 
 const Courses = () => {
-  const [courses, setCourses] = useState<Course[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
 
-  useEffect(() => {
-    fetch("/courses.json")
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch courses")
-        return res.json()
-      })
-      .then((data) => {
-        setCourses(data)
-        setLoading(false)
-      })
-      .catch((err) => {
-        setError(err.message)
-        setLoading(false)
-      })
-  }, [])
+  const {
+    data: courses,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["courses"],
+    queryFn: fechCoursesList,
+  })
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
         <CircularProgress />
@@ -38,7 +28,7 @@ const Courses = () => {
     return (
       <Container>
         <Typography color="error" align="center" variant="h5" sx={{ mt: 4 }}>
-          {error}
+          {error instanceof Error ? error.message : "Ошибка при загрузке курсов"}
         </Typography>
       </Container>
     )
@@ -50,15 +40,15 @@ const Courses = () => {
         variant="h3"
         align="center"
         gutterBottom
-        sx={{ fontWeight: 800, mb: 6, color: '#1a237e' }}
+        sx={{ fontWeight: 800, mb: 6, color: "#1a237e" }}
       >
         Наши курсы
       </Typography>
       <Grid container spacing={4}>
-        {courses.map((course) => (
+        {courses?.map((course) => (
           <Grid key={course.id} size={{ xs: 12, sm: 6, md: 4 }}>
             <ImgMediaCard
-              image={course.image}
+              image={course.image || "https://picsum.photos/300/300?random=103"}
               title={course.title}
               description={course.description}
               onView={() => navigate(`/courses/${course.id}/modules`)}

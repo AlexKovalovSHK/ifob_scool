@@ -1,16 +1,7 @@
 // src/api/axios.ts
-import axios from 'axios';
+import { $api } from '../../utils/apiUtils';
 import { TelegramAuthData, User, UserLogin, UserRegister, UserUpdate } from '../users/type';
-import { API_URL } from '../../config';
 
-
-const $api = axios.create({
-    baseURL: API_URL,
-    withCredentials: true,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
 
 // Добавляем интерцептор, который будет подставлять токен в каждый запрос автоматически
 $api.interceptors.request.use((config) => {
