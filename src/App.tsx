@@ -14,23 +14,31 @@ import { BuyBackComponent } from "./components/courses/BuyBackComponent"
 
 //export const API_URL = import.meta.env.VITE_API_URL || 'https://stas-serv.shk.solutions'
 
-export const App = () => (
-  <div className="App">
-    <Header />
-    <div className="main-content">
-      <Routes>
-        <Route path="/" element={<Courses />} />
-        <Route path="/courses" element={<Courses />} />
-        <Route path="/courses/:courseId/modules" element={<Modules />} />
-        <Route path="/courses/:courseId/buy" element={<BuyBackComponent />} />
-        <Route path="/cabinet" element={<UserCabinet />} />
-        <Route path="/teachers" element={<Teachers />} />
-        <Route path="/videos" element={<Videos />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/admin" element={<AdminComponent />} />
-      </Routes>
+export const App = () => {
+  // Проверка переменной окружения
+  const isDev = import.meta.env.VITE_IS_DEV === 'true';
+
+  return (
+    <div className="App">
+      <Header />
+      <div className="main-content">
+        <Routes>
+          <Route path="/" element={<Courses />} />
+          <Route path="/courses" element={<Courses />} />
+          <Route path="/courses/:courseId/modules" element={<Modules />} />
+          <Route path="/courses/:courseId/buy" element={<BuyBackComponent />} />
+          <Route path="/cabinet" element={<UserCabinet />} />
+          <Route path="/teachers" element={<Teachers />} />
+          <Route path="/videos" element={<Videos />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          
+          {/* Админка доступна только в режиме разработки */}
+          {isDev && <Route path="/admin" element={<AdminComponent />} />}
+          <Route path="*" element={<Courses />} />
+        </Routes>
+      </div>
+      <Footer />
     </div>
-    <Footer />
-  </div>
-)
+  )
+}
