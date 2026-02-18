@@ -36,14 +36,7 @@ export interface Module {
   hours?: number
 }
 
-export interface Teacher {
-  id: string
-  email: string
-  name: string
-  bio: string
-  image?: string
-  specialization: string
-}
+
 
 export interface NewCourseDto {
   title: string;
@@ -66,10 +59,4 @@ export interface NewModuleDto {
   rating?: number
 }
 
-export interface NewTeacherDto {
-  name: string
-  email: string
-  bio: string
-  specialization: string
-  image?: string
-}
+

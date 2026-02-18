@@ -25,7 +25,8 @@ import {
   fechDeleteTeacher,
   fechTeachersList,
 } from "../../features/teachers/teachersApi"
-import { NewTeacherDto } from "../../features/courses/type"
+import UpdateTeacherModal from "../modals/UpdateTeacherModal"
+import { NewTeacherDto } from "../../features/teachers/type"
 
 const TeachersBoxComponent = () => {
   const queryClient = useQueryClient()
@@ -189,6 +190,7 @@ const TeachersBoxComponent = () => {
                   <TableCell>{teacher.email}</TableCell>
                   <TableCell>{teacher.specialization}</TableCell>
                   <TableCell align="right">
+                    <UpdateTeacherModal teacher={teacher}/>
                     <IconButton
                       color="error"
                       onClick={() => deleteTeacherMutation.mutate(teacher.id.toString())}

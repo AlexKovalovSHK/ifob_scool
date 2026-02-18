@@ -1,7 +1,7 @@
 import { log } from "console";
 import $api from "../auth/api";
 import { getToken } from "../auth/utils";
-import { Course, Module, NewCourseDto, NewModuleDto, Teacher, NewTeacherDto } from "./type";
+import { Course, Module, NewCourseDto, NewModuleDto } from "./type";
 
 
 export async function fechCoursesList(): Promise<Course[]> {

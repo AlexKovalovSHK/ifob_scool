@@ -1,6 +1,6 @@
 import $api from "../auth/api";
 import { getToken } from "../auth/utils";
-import { NewTeacherDto, Teacher } from "../courses/type";
+import { NewTeacherDto, Teacher, UpdateTeacherDto } from "./type";
 
 export async function fechTeachersList(): Promise<Teacher[]> {
     const res = await $api.get(
@@ -39,4 +39,18 @@ export async function fechDeleteTeacher(id: string): Promise<void> {
             withCredentials: true,
         }
     );
+}
+
+export async function fechUpdateTeacher(updateTeacher: UpdateTeacherDto): Promise<Teacher> {
+    const res = await $api.patch(
+        `/teachers/${updateTeacher.id}`, // Используем id из DTO для URL
+        updateTeacher,
+        {
+            headers: {
+                Authorization: `Bearer ${getToken()}`,
+            },
+            withCredentials: true,
+        }
+    );
+    return res.data;
 }
