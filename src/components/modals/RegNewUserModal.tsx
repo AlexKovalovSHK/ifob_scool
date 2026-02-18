@@ -31,7 +31,7 @@ export default function RegNewUserModal() {
     email: '',
     password: '',
     phone: '',
-    telegram_username: '',
+    telegramUsername: '',
   });
 
   const [successMsg, setSuccessMsg] = React.useState("");
@@ -40,7 +40,7 @@ export default function RegNewUserModal() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    setFormData({ name: '', surname: '', email: '', password: '', phone: '', telegram_username: '' });
+    setFormData({ name: '', surname: '', email: '', password: '', phone: '', telegramUsername: '' });
     setErrorMsg("");
   };
 
@@ -135,8 +135,8 @@ export default function RegNewUserModal() {
               />
               <TextField
                 label="Telegram Username"
-                name="telegram_username"
-                value={formData.telegram_username}
+                name="telegramUsername"
+                value={formData.telegramUsername}
                 onChange={handleChange}
                 fullWidth
                 placeholder="@username"

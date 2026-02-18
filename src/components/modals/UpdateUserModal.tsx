@@ -36,7 +36,7 @@ export default function UpdateUserModal({ user }: UpdateUserModalProps) {
         surname: user.surname,
         email: user.email,
         phone: user.phone || '',
-        telegram_username: user.telegram_username || '',
+        telegramUsername: user.telegramUsername || '',
     });
 
     const [successMsg, setSuccessMsg] = React.useState("");
@@ -126,7 +126,7 @@ export default function UpdateUserModal({ user }: UpdateUserModalProps) {
                             <TextField
                                 label="Telegram Username"
                                 name="telegram_username"
-                                value={formData.telegram_username}
+                                value={formData.telegramUsername}
                                 onChange={handleChange}
                                 fullWidth
                                 placeholder="@username"

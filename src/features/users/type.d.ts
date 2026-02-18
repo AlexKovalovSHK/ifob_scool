@@ -23,7 +23,7 @@ export interface UserRegister {
     email: string;
     password: string;
     phone?: string; // необязательно, если не спрашиваете сразу
-    telegram_username?: string;
+    telegramUsername?: string;
 }
 
 // Для обновления профиля (включая привязку Telegram)
