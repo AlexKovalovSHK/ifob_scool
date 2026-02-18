@@ -6,8 +6,8 @@ export interface User {
     role: string;
     phone?: string;
     // Telegram данные (необязательны, пока не привязаны)
-    telegram_username?: string; 
-    telegram_id?: number; 
+    telegramUsername?: string;
+    telegram_id?: number;
     avatar?: string;
 }
 
@@ -23,6 +23,7 @@ export interface UserRegister {
     email: string;
     password: string;
     phone?: string; // необязательно, если не спрашиваете сразу
+    telegram_username?: string;
 }
 
 // Для обновления профиля (включая привязку Telegram)
@@ -35,10 +36,10 @@ export interface UserUpdate {
     phone?: string;
     avatar?: string;
     // Эти поля будут отправлены после авторизации в виджете
-    telegram_username?: string;
+    telegramUsername?: string;
     telegram_id?: number;
     // Поле для верификации на бэкенде (хэш от Телеграма)
-    telegram_auth_hash?: string; 
+    telegram_auth_hash?: string;
 }
 
 /**
@@ -53,4 +54,15 @@ export interface TelegramAuthData {
     photo_url?: string;
     auth_date: number;
     hash: string;
+}
+
+export interface ChangePasswordData {
+    oldPassword: string;
+    newPassword: string;
+}
+
+export interface ResetPasswordData {
+    email: string;
+    code: string;
+    newPassword: string;
 }

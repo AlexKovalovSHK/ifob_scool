@@ -13,6 +13,8 @@ import {
 
 import { UserUpdate, TelegramAuthData } from '../../features/users/type';
 import TelegramLogin from '../auth/TelegramLogin';
+import ChangePasswordModal from '../modals/ChangePasswordModal';
+
 import { useAppSelector, useAppDispatch } from '../../app/hooks'; // Добавлен dispatch
 import { selectUser, selectUserStatus, fetchUser, updateUserProfile } from '../../features/users/userSlice';
 
@@ -52,7 +54,7 @@ export const UserCabinet = () => {
                 email: user.email,
                 phone: user.phone || '',
                 avatar: user.avatar,
-                telegram_username: user.telegram_username,
+                telegramUsername: user.telegramUsername,
                 telegram_id: user.telegram_id,
             });
         }
@@ -61,7 +63,6 @@ export const UserCabinet = () => {
     useEffect(() => {
         setPurchasedCourses([
             { id: 1, title: "Инструментовка", progress: 65, lastLesson: "II закон инструментовки", instructor: "Парафейник Максим" },
-            { id: 2, title: "Инструментоведение", progress: 10, lastLesson: "Введение в духовые инструменты", instructor: "Ахмедшин Рустем" }
         ]);
     }, []);
 
@@ -71,7 +72,7 @@ export const UserCabinet = () => {
 
         const updateData: UserUpdate = {
             id: user.id, // Добавляем обязательное поле id
-            telegram_username: tgUser.username ? `@${tgUser.username}` : tgUser.first_name,
+            telegramUsername: tgUser.username ? `@${tgUser.username}` : tgUser.first_name,
             telegram_id: tgUser.id,
             avatar: tgUser.photo_url || user.avatar,
             telegram_auth_hash: tgUser.hash // Передаем хэш для проверки на бэкенде
@@ -79,7 +80,7 @@ export const UserCabinet = () => {
 
         dispatch(updateUserProfile(updateData))
             .unwrap()
-            .then(() => alert(`Аккаунт ${updateData.telegram_username} успешно привязан!`))
+            .then(() => alert(`Аккаунт ${updateData.telegramUsername} успешно привязан!`))
             .catch((err) => alert("Ошибка привязки: " + err));
     };
 
@@ -93,7 +94,7 @@ export const UserCabinet = () => {
                 email: user.email,
                 phone: user.phone || '',
                 avatar: user.avatar,
-                telegram_username: user.telegram_username,
+                telegramUsername: user.telegramUsername,
                 telegram_id: user.telegram_id,
             });
         }
@@ -107,7 +108,7 @@ export const UserCabinet = () => {
 
     // 5. Сохранение изменений в базу данных через Redux
     const handleSave = () => {
-        console.log("ДАННЫЕ ПЕРЕД ОТПРАВКОЙ:", editedUser); 
+        console.log("ДАННЫЕ ПЕРЕД ОТПРАВКОЙ:", editedUser);
         if (editedUser) {
             dispatch(updateUserProfile(editedUser))
                 .unwrap()
@@ -165,7 +166,7 @@ export const UserCabinet = () => {
                                 {user.telegram_id ? (
                                     <Alert severity="success" icon={false} sx={{ py: 0, borderRadius: 2 }}>
                                         <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                                            {user.telegram_username} (ID: {user.telegram_id})
+                                            {user.telegramUsername} (ID: {user.telegram_id})
                                         </Typography>
                                     </Alert>
                                 ) : (
@@ -231,8 +232,10 @@ export const UserCabinet = () => {
                                     </Button>
                                 </Stack>
                             )}
+                            <ChangePasswordModal />
                         </Box>
                     </Paper>
+
                 </Grid>
 
                 <Grid size={{ xs: 12, md: 8 }}>
@@ -257,12 +260,6 @@ export const UserCabinet = () => {
                                                             <Typography variant="h6" sx={{ fontWeight: 700 }}>{course.title}</Typography>
                                                             <Typography variant="body2" color="text.secondary">Преподаватель: {course.instructor}</Typography>
                                                         </Box>
-                                                        <Typography variant="h6" color="primary">{course.progress}%</Typography>
-                                                    </Box>
-                                                    <LinearProgress variant="determinate" value={course.progress} sx={{ height: 8, borderRadius: 5, mb: 2 }} />
-                                                    <Box display="flex" justifyContent="space-between" alignItems="center">
-                                                        <Typography variant="body2">Последний урок: <b>{course.lastLesson}</b></Typography>
-                                                        <Button variant="contained" size="small">Продолжить</Button>
                                                     </Box>
                                                 </CardContent>
                                             </Card>

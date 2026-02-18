@@ -113,14 +113,22 @@ const Header = () => {
               ))}
 
               {isDev && !user && (
-    <MenuItem onClick={() => handleNavigate("/login")}>Вход</MenuItem>
-  )}
-  {isDev && !user && (
-    <MenuItem onClick={() => handleNavigate("/register")}>Регистрация</MenuItem>
-  )}
+                <MenuItem onClick={() => handleNavigate("/login")}>
+                  Вход
+                </MenuItem>
+              )}
+              {isDev && !user && (
+                <MenuItem onClick={() => handleNavigate("/register")}>
+                  Регистрация
+                </MenuItem>
+              )}
 
-  {user && <MenuItem onClick={() => handleNavigate("/cabinet")}>Кабинет</MenuItem>}
-  {user && <MenuItem onClick={handleLogout}>Выход</MenuItem>}
+              {user && (
+                <MenuItem onClick={() => handleNavigate("/cabinet")}>
+                  Кабинет
+                </MenuItem>
+              )}
+              {user && <MenuItem onClick={handleLogout}>Выход</MenuItem>}
             </Menu>
           </Box>
 

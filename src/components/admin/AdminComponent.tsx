@@ -23,10 +23,11 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft"
 import ChevronRightIcon from "@mui/icons-material/ChevronRight"
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks"
 import PeopleIcon from "@mui/icons-material/People"
-import HomeIcon from "@mui/icons-material/Home" 
-import { useNavigate } from "react-router-dom" 
+import HomeIcon from "@mui/icons-material/Home"
+import { useNavigate } from "react-router-dom"
 import TeachersBoxComponent from "./TeachersBoxComponent"
 import CourseBoxComponent from "./CourseBoxComponent"
+import UserListBoxComponent from "./UserListBoxComponent"
 
 const drawerWidth = 240
 
@@ -95,11 +96,11 @@ export default function AdminComponent() {
   const [successMsg, setSuccessMsg] = React.useState("")
   const [errorMsg, setErrorMsg] = React.useState("")
   const [showCreateForm, setShowCreateForm] = React.useState(false)
-  const [currentTab, setCurrentTab] = React.useState<"courses" | "teachers">(
+  const [currentTab, setCurrentTab] = React.useState<"courses" | "teachers" | "users">(
     "courses",
   )
 
- 
+
 
   const handleDrawerOpen = () => setOpen(true)
   const handleDrawerClose = () => setOpen(false)
@@ -121,7 +122,11 @@ export default function AdminComponent() {
 
           {/* Добавлен sx={{ flexGrow: 1 }}, чтобы кнопка справа ушла в край */}
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            {currentTab === "courses" ? "Админ: Курсы" : "Админ: Преподаватели"}
+            {currentTab === "courses"
+              ? "Админ: Курсы"
+              : currentTab === "teachers"
+                ? "Админ: Преподаватели"
+                : "Админ: Пользователи"}
           </Typography>
 
           {/* Кнопка перемещения на главную */}
@@ -194,6 +199,23 @@ export default function AdminComponent() {
               <ListItemText primary="Преподаватели" />
             </ListItemButton>
           </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton
+              selected={currentTab === "users"}
+              onClick={() => {
+                setCurrentTab("users")
+                setOpen(false)
+                setShowCreateForm(false)
+              }}
+            >
+              <ListItemIcon>
+                <PeopleIcon
+                  color={currentTab === "users" ? "primary" : "inherit"}
+                />
+              </ListItemIcon>
+              <ListItemText primary="Пользователи" />
+            </ListItemButton>
+          </ListItem>
         </List>
       </Drawer>
       <Main open={open}>
@@ -201,8 +223,10 @@ export default function AdminComponent() {
         <div className="container">
           {currentTab === "courses" ? (
             <CourseBoxComponent />
-          ) : (
+          ) : currentTab === "teachers" ? (
             <TeachersBoxComponent />
+          ) : (
+            <UserListBoxComponent />
           )}
         </div>
 
