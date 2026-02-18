@@ -253,7 +253,7 @@ export const UserCabinet = () => {
                             <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)}>
                                 <Tab label="Мои курсы" icon={<SchoolIcon />} iconPosition="start" />
                                 <Tab label="Видео" icon={<PlayCircleOutlineIcon />} iconPosition="start" />
-                                <Tab label="Сертификаты" icon={<CardMembershipIcon />} iconPosition="start" />
+                                {/* <Tab label="Сертификаты" icon={<CardMembershipIcon />} iconPosition="start" /> */}
                             </Tabs>
                         </Box>
                         <Box sx={{ p: 4 }}>
