@@ -1,0 +1,16 @@
+[
+    {
+        "id": 1,
+        "title": "Инструментовка: Урок 1",
+        "description": "Введение в основы инструментовки и оркестровки.",
+        "url": "https://gbeq-my.sharepoint.com/:v:/g/personal/mp_itwald_eu/IQAM_bpvyc2IQ4ZfBwFO5TbtAbDzt6O2LSZPS8lhfeqXI9s?e=EmDFO1",
+        "thumbnail": "/func_instr_modul1.png"
+    },
+    {
+        "id": 2,
+        "title": "Инструментовка: Урок 2",
+        "description": "1. Повторение и проверка. 2. II закон инструментовки. 3. Правило совместимости.",
+        "url": "https://gbeq-my.sharepoint.com/:v:/g/personal/mp_itwald_eu/IQAM_bpvyc2IQ4ZfBwFO5TbtAbDzt6O2LSZPS8lhfeqXI9s?e=EmDFO1",
+        "thumbnail": "https://img.youtube.com/vi/9bZkp7q19f0/0.jpg"
+    }
+]

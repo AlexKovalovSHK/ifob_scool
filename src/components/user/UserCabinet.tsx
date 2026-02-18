@@ -10,6 +10,7 @@ import {
     CardMembership as CardMembershipIcon, Telegram as TelegramIcon,
     Phone as PhoneIcon, Email as EmailIcon
 } from '@mui/icons-material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 import { UserUpdate, TelegramAuthData } from '../../features/users/type';
 import TelegramLogin from '../auth/TelegramLogin';
@@ -17,6 +18,7 @@ import ChangePasswordModal from '../modals/ChangePasswordModal';
 
 import { useAppSelector, useAppDispatch } from '../../app/hooks'; // Добавлен dispatch
 import { selectUser, selectUserStatus, fetchUser, updateUserProfile } from '../../features/users/userSlice';
+import { generateRandImgUrl } from '../../utils/utils';
 
 export const UserCabinet = () => {
     const dispatch = useAppDispatch();
@@ -31,6 +33,7 @@ export const UserCabinet = () => {
     // Состояние для редактирования (инициализируем пустым, наполним в useEffect)
     const [editedUser, setEditedUser] = useState<UserUpdate | null>(null);
     const [purchasedCourses, setPurchasedCourses] = useState<any[]>([]);
+    const [videoList, setVideoList] = useState<any[]>([]);
 
     const isLocalhost = window.location.hostname === 'localhost';
 
@@ -62,8 +65,15 @@ export const UserCabinet = () => {
 
     useEffect(() => {
         setPurchasedCourses([
-            { id: 1, title: "Инструментовка", progress: 65, lastLesson: "II закон инструментовки", instructor: "Парафейник Максим" },
+            { id: 1, title: "Инструментовка", progress: 65, lastLesson: "II закон инструментовки", instructor: "Парафейник Максим" }
         ]);
+    }, []);
+
+    useEffect(() => {
+        fetch('/videoList.json')
+            .then(res => res.json())
+            .then(data => setVideoList(data))
+            .catch(err => console.error("Error fetching video list:", err));
     }, []);
 
     // 4. Привязка Telegram через асинхронный экшен
@@ -235,11 +245,9 @@ export const UserCabinet = () => {
                             <ChangePasswordModal />
                         </Box>
                     </Paper>
-
                 </Grid>
 
                 <Grid size={{ xs: 12, md: 8 }}>
-                    {/* Правая колонка с табами остается почти такой же */}
                     <Paper elevation={3} sx={{ borderRadius: 3, minHeight: '100%' }}>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider', px: 2, pt: 2 }}>
                             <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)}>
@@ -252,7 +260,7 @@ export const UserCabinet = () => {
                             {tabValue === 0 && (
                                 <Grid container spacing={3}>
                                     {purchasedCourses.map((course) => (
-                                        <Grid key={course.id} size={{ xs: 12 }}>
+                                        <Grid size={{ xs: 12 }} key={course.id}>
                                             <Card variant="outlined" sx={{ borderRadius: 3, borderLeft: '6px solid #1a237e' }}>
                                                 <CardContent>
                                                     <Box display="flex" justifyContent="space-between" mb={2}>
@@ -261,6 +269,53 @@ export const UserCabinet = () => {
                                                             <Typography variant="body2" color="text.secondary">Преподаватель: {course.instructor}</Typography>
                                                         </Box>
                                                     </Box>
+                                                </CardContent>
+                                            </Card>
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            )}
+
+                            {tabValue === 1 && (
+                                <Grid container spacing={3}>
+                                    {videoList.map((video) => (
+                                        <Grid size={{ xs: 12, sm: 6 }} key={video.id}>
+                                            <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                                                <Box sx={{ position: 'relative', pt: '56.25%' }}>
+                                                    <Avatar
+                                                        src={generateRandImgUrl(400, 225, `video-${video.id}`)}
+                                                        variant="square"
+                                                        sx={{
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            borderRadius: '3px 3px 0 0'
+                                                        }}
+                                                    />
+                                                    <Box sx={{
+                                                        position: 'absolute',
+                                                        top: '50%',
+                                                        left: '50%',
+                                                        transform: 'translate(-50%, -50%)',
+                                                        bgcolor: 'rgba(0,0,0,0.4)',
+                                                        borderRadius: '50%',
+                                                        p: 1
+                                                    }}>
+                                                        <PlayArrowIcon sx={{ color: 'white', fontSize: 40 }} />
+                                                    </Box>
+                                                </Box>
+                                                <CardContent sx={{ flexGrow: 1 }}>
+                                                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>{video.title}</Typography>
+                                                    <Typography variant="body2" color="text.secondary">{video.description}</Typography>
+                                                    <Button
+                                                        variant="text"
+                                                        sx={{ mt: 2, p: 0, textTransform: 'none' }}
+                                                        onClick={() => window.open(video.url, '_blank')}
+                                                    >
+                                                        Смотреть
+                                                    </Button>
                                                 </CardContent>
                                             </Card>
                                         </Grid>
