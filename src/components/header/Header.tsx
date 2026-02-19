@@ -29,7 +29,7 @@ const pages = [
 ]
 
 const Header = () => {
-  const isDev = import.meta.env.VITE_IS_DEV === "true"
+  //const isDev = import.meta.env.VITE_IS_DEV === "true"
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null)
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
@@ -112,16 +112,14 @@ const Header = () => {
                 </MenuItem>
               ))}
 
-              {isDev && !user && (
+              <>
                 <MenuItem onClick={() => handleNavigate("/login")}>
                   Вход
                 </MenuItem>
-              )}
-              {isDev && !user && (
                 <MenuItem onClick={() => handleNavigate("/register")}>
                   Регистрация
                 </MenuItem>
-              )}
+              </>
 
               {user && (
                 <MenuItem onClick={() => handleNavigate("/cabinet")}>
@@ -206,35 +204,33 @@ const Header = () => {
               </Stack>
             ) : (
               <Stack direction="row" spacing={2}>
-                {isDev && (
-                  <>
-                    <Button
-                      component={NavLink}
-                      to="/login"
-                      sx={{
-                        color: "white",
-                        textTransform: "none",
-                        fontWeight: 600,
-                      }}
-                    >
-                      Вход
-                    </Button>
-                    <Button
-                      component={NavLink}
-                      to="/register"
-                      variant="contained"
-                      sx={{
-                        bgcolor: "white",
-                        color: "#1976d2",
-                        textTransform: "none",
-                        fontWeight: 700,
-                        "&:hover": { bgcolor: "#f5f5f5" },
-                      }}
-                    >
-                      Регистрация
-                    </Button>
-                  </>
-                )}
+                <>
+                  <Button
+                    component={NavLink}
+                    to="/login"
+                    sx={{
+                      color: "white",
+                      textTransform: "none",
+                      fontWeight: 600,
+                    }}
+                  >
+                    Вход
+                  </Button>
+                  <Button
+                    component={NavLink}
+                    to="/register"
+                    variant="contained"
+                    sx={{
+                      bgcolor: "white",
+                      color: "#1976d2",
+                      textTransform: "none",
+                      fontWeight: 700,
+                      "&:hover": { bgcolor: "#f5f5f5" },
+                    }}
+                  >
+                    Регистрация
+                  </Button>
+                </>
               </Stack>
             )}
           </Box>
