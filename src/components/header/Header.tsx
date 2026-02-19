@@ -26,6 +26,7 @@ const pages = [
   { name: "Курсы", path: "/courses" },
   { name: "Преподаватели", path: "/teachers" },
   { name: "Видео", path: "/videos" },
+  { name: "Ноты", path: "/notes" },
 ]
 
 const Header = () => {
@@ -112,14 +113,14 @@ const Header = () => {
                 </MenuItem>
               ))}
 
-              <>
-                <MenuItem onClick={() => handleNavigate("/login")}>
+              {!user && [
+                <MenuItem key="login" onClick={() => handleNavigate("/login")}>
                   Вход
-                </MenuItem>
-                <MenuItem onClick={() => handleNavigate("/register")}>
+                </MenuItem>,
+                <MenuItem key="register" onClick={() => handleNavigate("/register")}>
                   Регистрация
                 </MenuItem>
-              </>
+              ]}
 
               {user && (
                 <MenuItem onClick={() => handleNavigate("/cabinet")}>
@@ -204,8 +205,9 @@ const Header = () => {
               </Stack>
             ) : (
               <Stack direction="row" spacing={2}>
-                <>
+                {!user && [
                   <Button
+                    key="login"
                     component={NavLink}
                     to="/login"
                     sx={{
@@ -215,8 +217,9 @@ const Header = () => {
                     }}
                   >
                     Вход
-                  </Button>
+                  </Button>,
                   <Button
+                    key="register"
                     component={NavLink}
                     to="/register"
                     variant="contained"
@@ -230,7 +233,7 @@ const Header = () => {
                   >
                     Регистрация
                   </Button>
-                </>
+                ]}
               </Stack>
             )}
           </Box>

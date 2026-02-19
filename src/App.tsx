@@ -11,6 +11,7 @@ import RegisterPage from "./components/auth/RegisterPage"
 import Footer from "./footer/Footer"
 import AdminComponent from "./components/admin/AdminComponent"
 import { BuyBackComponent } from "./components/courses/BuyBackComponent"
+import NoteListComp from "./components/notes/NoteListComp";
 
 //export const API_URL = import.meta.env.VITE_API_URL || 'https://stas-serv.shk.solutions'
 
@@ -30,9 +31,10 @@ export const App = () => {
           <Route path="/cabinet" element={<UserCabinet />} />
           <Route path="/teachers" element={<Teachers />} />
           <Route path="/videos" element={<Videos />} />
+          <Route path="/notes" element={<NoteListComp />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          
+
           {/* Админка доступна только в режиме разработки */}
           {isDev && <Route path="/admin" element={<AdminComponent />} />}
           <Route path="*" element={<Courses />} />
