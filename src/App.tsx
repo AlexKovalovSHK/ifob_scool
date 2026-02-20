@@ -12,6 +12,7 @@ import Footer from "./footer/Footer"
 import AdminComponent from "./components/admin/AdminComponent"
 import { BuyBackComponent } from "./components/courses/BuyBackComponent"
 import NoteListComp from "./components/notes/NoteListComp";
+import TgCallbackPage from "./components/auth/TgCallbackPage";
 
 //export const API_URL = import.meta.env.VITE_API_URL || 'https://stas-serv.shk.solutions'
 
@@ -36,6 +37,7 @@ export const App = () => {
           <Route path="/notes" element={<NoteListComp />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/auth/tg-callback" element={<TgCallbackPage />} />
 
           {/* Админка доступна только в режиме разработки */}
           {isDev && <Route path="/admin" element={<AdminComponent />} />}
