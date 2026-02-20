@@ -54,6 +54,8 @@ const LoginPage = () => {
     try {
       const result = await userApi.loginWithTelegram(tgUser)
       sessionStorage.setItem("ifob_token", result.access_token)
+      console.log(result)
+      dispatch(setUser(result.user)); 
       navigate("/")
     } catch (error: any) {
       console.error("Telegram Auth Error:", error)
