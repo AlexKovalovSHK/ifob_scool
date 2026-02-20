@@ -115,19 +115,19 @@ const Header = () => {
 
               {!user && [
                 <MenuItem key="login" onClick={() => handleNavigate("/login")}>
-                  Вход
+                  Login
                 </MenuItem>,
                 <MenuItem key="register" onClick={() => handleNavigate("/register")}>
-                  Регистрация
+                  Register
                 </MenuItem>
               ]}
 
               {user && (
                 <MenuItem onClick={() => handleNavigate("/cabinet")}>
-                  Кабинет
+                  Cabinet
                 </MenuItem>
               )}
-              {user && <MenuItem onClick={handleLogout}>Выход</MenuItem>}
+              {user && <MenuItem onClick={handleLogout}>Logout</MenuItem>}
             </Menu>
           </Box>
 
@@ -189,7 +189,7 @@ const Header = () => {
                     fontWeight: 600,
                   }}
                 >
-                  Кабинет
+                  Cabinet
                 </Button>
                 <Button
                   onClick={handleLogout}
@@ -200,7 +200,7 @@ const Header = () => {
                     fontWeight: 600,
                   }}
                 >
-                  Выход
+                  Logout
                 </Button>
               </Stack>
             ) : (
@@ -216,7 +216,7 @@ const Header = () => {
                       fontWeight: 600,
                     }}
                   >
-                    Вход
+                    Login
                   </Button>,
                   <Button
                     key="register"
@@ -231,7 +231,7 @@ const Header = () => {
                       "&:hover": { bgcolor: "#f5f5f5" },
                     }}
                   >
-                    Регистрация
+                    Register
                   </Button>
                 ]}
               </Stack>

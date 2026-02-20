@@ -16,6 +16,11 @@ import {
   Button,
   Alert,
   Snackbar,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
 } from "@mui/material"
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar"
 import MenuIcon from "@mui/icons-material/Menu"
@@ -28,6 +33,7 @@ import { useNavigate } from "react-router-dom"
 import TeachersBoxComponent from "./TeachersBoxComponent"
 import CourseBoxComponent from "./CourseBoxComponent"
 import UserListBoxComponent from "./UserListBoxComponent"
+import api from "../../features/auth/api"
 
 const drawerWidth = 240
 
@@ -100,10 +106,22 @@ export default function AdminComponent() {
     "courses",
   )
 
-
+  const [broadcastModalOpen, setBroadcastModalOpen] = React.useState(false);
+  const [messageText, setMessageText] = React.useState("");
 
   const handleDrawerOpen = () => setOpen(true)
   const handleDrawerClose = () => setOpen(false)
+
+  const handleSendBroadcast = async () => {
+    try {
+      await api.post('/admin/send-broadcast', { message: messageText });
+      setSuccessMsg("Сообщение отправлено в Telegram!");
+      setBroadcastModalOpen(false);
+      setMessageText("");
+    } catch (err) {
+      setErrorMsg("Не удалось отправить сообщение");
+    }
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -129,7 +147,13 @@ export default function AdminComponent() {
                 : "Админ: Пользователи"}
           </Typography>
 
-          {/* Кнопка перемещения на главную */}
+          <Button
+            color="inherit"
+            onClick={() => setBroadcastModalOpen(true)}
+            sx={{ fontWeight: 600, mr: 2 }}
+          >
+            Оповестить в TG
+          </Button>
           <Button
             color="inherit"
             startIcon={<HomeIcon />}
@@ -249,6 +273,30 @@ export default function AdminComponent() {
           </Alert>
         </Snackbar>
       </Main>
+
+      <Dialog open={broadcastModalOpen} onClose={() => setBroadcastModalOpen(false)}>
+        <DialogTitle>Рассылка в Telegram группу</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            multiline
+            rows={4}
+            margin="dense"
+            label="Текст сообщения"
+            fullWidth
+            variant="outlined"
+            value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setBroadcastModalOpen(false)}>Отмена</Button>
+          <Button onClick={handleSendBroadcast} variant="contained" color="primary">
+            Отправить
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </Box>
   )
 }
