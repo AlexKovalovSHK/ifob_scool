@@ -1,5 +1,5 @@
 export const getToken = (): string => {
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("ifob_token");
   if (token) {
     return token;
   } else {

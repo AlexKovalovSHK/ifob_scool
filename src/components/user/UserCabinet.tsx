@@ -40,7 +40,7 @@ export const UserCabinet = () => {
     // 2. Загрузка данных, если их нет в сторе (например, после перезагрузки страницы)
     useEffect(() => {
         if (!user) {
-            const userId = localStorage.getItem("userId");
+            const userId = sessionStorage.getItem("userId");
             if (userId) {
                 dispatch(fetchUser(userId));
             }

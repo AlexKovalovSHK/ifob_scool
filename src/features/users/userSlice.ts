@@ -47,14 +47,14 @@ export const userSlice = createAppSlice({
       },
       {
         fulfilled: (state, action) => {
-          state.data = action.payload // Обновляем данные в сторе новыми данными от сервера
+          state.data = action.payload
         },
       }
     ),
 
     logout: create.reducer(state => {
       state.data = null
-      localStorage.removeItem("token")
+      sessionStorage.removeItem("token")
     }),
   }),
   selectors: {

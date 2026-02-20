@@ -52,7 +52,7 @@ const RegisterPage = () => {
 
             // Если бэкенд сразу возвращает токен после регистрации:
             if (result.access_token) {
-                localStorage.setItem('token', result.access_token);
+                sessionStorage.setItem('ifob_token', result.access_token);
                 navigate('/'); // Уходим на главную
             } else {
                 navigate('/login'); // Или на логин, если токен не выдается сразу
@@ -83,7 +83,7 @@ const RegisterPage = () => {
             }
 
             // Сохраняем токен и переходим в кабинет
-            localStorage.setItem('token', result.access_token);
+            sessionStorage.setItem('ifob_token', result.access_token);
             navigate('/'); 
         } catch (err: any) {
             setError(err.message);

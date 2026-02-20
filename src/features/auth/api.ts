@@ -5,7 +5,7 @@ import { ChangePasswordData, ResetPasswordData, TelegramAuthData, User, UserLogi
 
 // Добавляем интерцептор, который будет подставлять токен в каждый запрос автоматически
 $api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('ifob_token');
     if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
     }

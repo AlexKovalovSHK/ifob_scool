@@ -37,8 +37,8 @@ const LoginPage = () => {
     try {
       const result = await userApi.login({ email, password })
 
-     localStorage.setItem("token", result.access_token);
-    localStorage.setItem("userId", result.user.id.toString()); // Сохраняем ID
+     sessionStorage.setItem("ifob_token", result.access_token);
+    sessionStorage.setItem("userId", result.user.id.toString()); // Сохраняем ID
     dispatch(setUser(result.user)); // Сразу кладем юзера в стор
     navigate("/");
     } catch (error: any) {
@@ -53,7 +53,7 @@ const LoginPage = () => {
     setLoading(true)
     try {
       const result = await userApi.loginWithTelegram(tgUser)
-      localStorage.setItem("token", result.access_token)
+      sessionStorage.setItem("ifob_token", result.access_token)
       navigate("/")
     } catch (error: any) {
       console.error("Telegram Auth Error:", error)

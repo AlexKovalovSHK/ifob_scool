@@ -19,6 +19,8 @@ export const App = () => {
   // Проверка переменной окружения
   const isDev = import.meta.env.VITE_IS_DEV === 'true';
 
+  
+
   return (
     <div className="App">
       <Header />
