@@ -33,7 +33,9 @@ import { useNavigate } from "react-router-dom"
 import TeachersBoxComponent from "./TeachersBoxComponent"
 import CourseBoxComponent from "./CourseBoxComponent"
 import UserListBoxComponent from "./UserListBoxComponent"
+import { MetricsComp } from "./MetricsComp"
 import api from "../../features/auth/api"
+import AnalyticsIcon from "@mui/icons-material/Analytics"
 
 const drawerWidth = 240
 
@@ -102,7 +104,7 @@ export default function AdminComponent() {
   const [successMsg, setSuccessMsg] = React.useState("")
   const [errorMsg, setErrorMsg] = React.useState("")
   const [showCreateForm, setShowCreateForm] = React.useState(false)
-  const [currentTab, setCurrentTab] = React.useState<"courses" | "teachers" | "users">(
+  const [currentTab, setCurrentTab] = React.useState<"courses" | "teachers" | "users" | "metrics">(
     "courses",
   )
 
@@ -144,7 +146,9 @@ export default function AdminComponent() {
               ? "Админ: Курсы"
               : currentTab === "teachers"
                 ? "Админ: Преподаватели"
-                : "Админ: Пользователи"}
+                : currentTab === "metrics"
+                  ? "Админ: Аналитика"
+                  : "Админ: Пользователи"}
           </Typography>
 
           <Button
@@ -240,6 +244,23 @@ export default function AdminComponent() {
               <ListItemText primary="Пользователи" />
             </ListItemButton>
           </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton
+              selected={currentTab === "metrics"}
+              onClick={() => {
+                setCurrentTab("metrics")
+                setOpen(false)
+                setShowCreateForm(false)
+              }}
+            >
+              <ListItemIcon>
+                <AnalyticsIcon
+                  color={currentTab === "metrics" ? "primary" : "inherit"}
+                />
+              </ListItemIcon>
+              <ListItemText primary="Аналитика" />
+            </ListItemButton>
+          </ListItem>
         </List>
       </Drawer>
       <Main open={open}>
@@ -249,6 +270,8 @@ export default function AdminComponent() {
             <CourseBoxComponent />
           ) : currentTab === "teachers" ? (
             <TeachersBoxComponent />
+          ) : currentTab === "metrics" ? (
+            <MetricsComp />
           ) : (
             <UserListBoxComponent />
           )}

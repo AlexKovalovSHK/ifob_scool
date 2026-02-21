@@ -1,8 +1,8 @@
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, useLocation } from "react-router-dom"
 import Header from "./components/header/Header"
 import Courses from "./components/courses/Courses"
 import Modules from "./components/courses/Modules"
-import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/css/bootstrap.min.css"
 import { UserCabinet } from "./components/user/UserCabinet"
 import Teachers from "./components/Teachers"
 import Videos from "./components/Videos"
@@ -11,16 +11,47 @@ import RegisterPage from "./components/auth/RegisterPage"
 import Footer from "./footer/Footer"
 import AdminComponent from "./components/admin/AdminComponent"
 import { BuyBackComponent } from "./components/courses/BuyBackComponent"
-import NoteListComp from "./components/notes/NoteListComp";
-import TgCallbackPage from "./components/auth/TgCallbackPage";
+import NoteListComp from "./components/notes/NoteListComp"
+import TgCallbackPage from "./components/auth/TgCallbackPage"
+import { useEffect, useRef } from "react"
+import {
+  trackPageExit,
+  trackPageView,
+} from "./features/analytics/analytics.service"
 
-//export const API_URL = import.meta.env.VITE_API_URL || 'https://stas-serv.shk.solutions'
+//trackPageView(location.pathname + location.search);
 
 export const App = () => {
-  // Проверка переменной окружения
-  const isDev = import.meta.env.VITE_IS_DEV === 'true';
+  const isDev = import.meta.env.VITE_IS_DEV === "true"
+  const location = useLocation()
+  const pageStartTime = useRef(Date.now())
 
-  
+  const currentPathRef = useRef(location.pathname + location.search)
+  const startTimeRef = useRef(Date.now())
+
+  useEffect(() => {
+    const fullPath = location.pathname + location.search
+
+    // 1. При входе на новую страницу отправляем Page View
+    trackPageView(fullPath)
+
+    // Обновляем рефы для текущей страницы
+    currentPathRef.current = fullPath
+    startTimeRef.current = Date.now()
+
+    // 2. Обработчик закрытия вкладки или обновления (F5)
+    const handleBeforeUnload = () => {
+      trackPageExit(currentPathRef.current, startTimeRef.current)
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload)
+
+    // 3. Cleanup-функция: срабатывает ПРИ СМЕНЕ РОУТА
+    return () => {
+      trackPageExit(currentPathRef.current, startTimeRef.current)
+      window.removeEventListener("beforeunload", handleBeforeUnload)
+    }
+  }, [location])
 
   return (
     <div className="App">
@@ -40,7 +71,7 @@ export const App = () => {
           <Route path="/auth/tg-callback" element={<TgCallbackPage />} />
 
           {/* Админка доступна только в режиме разработки */}
-          {isDev && <Route path="/admin" element={<AdminComponent />} />}
+          <Route path="/admin" element={<AdminComponent />}/>
           <Route path="*" element={<Courses />} />
         </Routes>
       </div>
