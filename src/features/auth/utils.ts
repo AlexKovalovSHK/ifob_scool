@@ -6,3 +6,4 @@ export const getToken = (): string => {
     return import.meta.env.VITE_TOKEN || "";
   }
 };
+

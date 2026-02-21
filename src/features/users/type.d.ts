@@ -3,7 +3,7 @@ export interface User {
     name: string;
     surname: string;
     email: string;
-    role: string;
+    role: string[];
     phone?: string;
     // Telegram данные (необязательны, пока не привязаны)
     telegramUsername?: string;

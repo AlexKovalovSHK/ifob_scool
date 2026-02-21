@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { API_URL } from '../../config';
 
-const URL = `${API_URL}/metrics`
+const URL = `${API_URL}metrics`
 
 // Получаем или создаем ID сессии (живет пока открыта вкладка)
 const getSessionId = () => {

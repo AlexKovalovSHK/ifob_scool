@@ -69,8 +69,6 @@ export const App = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/auth/tg-callback" element={<TgCallbackPage />} />
-
-          {/* Админка доступна только в режиме разработки */}
           <Route path="/admin" element={<AdminComponent />}/>
           <Route path="*" element={<Courses />} />
         </Routes>

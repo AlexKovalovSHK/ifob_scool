@@ -36,6 +36,9 @@ import UserListBoxComponent from "./UserListBoxComponent"
 import { MetricsComp } from "./MetricsComp"
 import api from "../../features/auth/api"
 import AnalyticsIcon from "@mui/icons-material/Analytics"
+import { useState } from "react"
+import { useAppSelector } from "../../app/hooks"
+import { selectUser } from "../../features/users/userSlice"
 
 const drawerWidth = 240
 
@@ -100,16 +103,28 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 export default function AdminComponent() {
   const theme = useTheme()
   const navigate = useNavigate()
-  const [open, setOpen] = React.useState(false)
-  const [successMsg, setSuccessMsg] = React.useState("")
-  const [errorMsg, setErrorMsg] = React.useState("")
-  const [showCreateForm, setShowCreateForm] = React.useState(false)
-  const [currentTab, setCurrentTab] = React.useState<"courses" | "teachers" | "users" | "metrics">(
+  const user = useAppSelector(selectUser);
+  const [open, setOpen] = useState(false)
+  const [successMsg, setSuccessMsg] = useState("")
+  const [errorMsg, setErrorMsg] = useState("")
+  const [showCreateForm, setShowCreateForm] = useState(false)
+  const [currentTab, setCurrentTab] = useState<"courses" | "teachers" | "users" | "metrics">(
     "courses",
   )
 
-  const [broadcastModalOpen, setBroadcastModalOpen] = React.useState(false);
-  const [messageText, setMessageText] = React.useState("");
+  const [broadcastModalOpen, setBroadcastModalOpen] = useState(false);
+  const [messageText, setMessageText] = useState("");
+
+  const isAdmin = user?.role?.includes("Admin");
+  if (!isAdmin) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column', gap: 2 }}>
+        <Typography variant="h4">403</Typography>
+        <Typography>Доступ запрещен. У вас нет прав администратора.</Typography>
+        <Button variant="contained" onClick={() => navigate("/")}>На главную</Button>
+      </Box>
+    );
+  }
 
   const handleDrawerOpen = () => setOpen(true)
   const handleDrawerClose = () => setOpen(false)
@@ -124,6 +139,8 @@ export default function AdminComponent() {
       setErrorMsg("Не удалось отправить сообщение");
     }
   };
+
+
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -321,5 +338,6 @@ export default function AdminComponent() {
       </Dialog>
 
     </Box>
+
   )
 }

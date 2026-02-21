@@ -35,6 +35,13 @@ export const userApi = {
         return response.data;
     },
 
+    async adminLogin(data: UserLogin): Promise<AuthResponse> {
+        console.log(data);
+
+        const response = await $api.post<AuthResponse>('/auth/login/admin', data);
+        return response.data;
+    },
+
     // Логин через Telegram
     async loginWithTelegram(tgData: TelegramAuthData): Promise<AuthResponse> {
         const response = await $api.post<AuthResponse>('/auth/telegram', tgData);

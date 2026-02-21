@@ -19,8 +19,10 @@ import ChangePasswordModal from '../modals/ChangePasswordModal';
 import { useAppSelector, useAppDispatch } from '../../app/hooks'; // Добавлен dispatch
 import { selectUser, selectUserStatus, fetchUser, updateUserProfile } from '../../features/users/userSlice';
 import { generateRandImgUrl } from '../../utils/utils';
+import { useNavigate } from 'react-router-dom';
 
 export const UserCabinet = () => {
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
     // 1. Берем данные и статус из Redux
@@ -36,6 +38,7 @@ export const UserCabinet = () => {
     const [videoList, setVideoList] = useState<any[]>([]);
 
     const isLocalhost = window.location.hostname === 'localhost';
+    const isAdmin = user?.role?.includes("Admin");
 
     // 2. Загрузка данных, если их нет в сторе (например, после перезагрузки страницы)
     useEffect(() => {
@@ -243,6 +246,16 @@ export const UserCabinet = () => {
                                 </Stack>
                             )}
                             <ChangePasswordModal />
+                            {isAdmin && (
+                                <Button
+                                    variant="text"
+                                    fullWidth
+                                    onClick={() => navigate("/admin")}
+                                    sx={{ borderRadius: 2, textTransform: 'none', mt: 1, color: 'text.secondary' }}
+                                >
+                                    Admin panel
+                                </Button>
+                            )}
                         </Box>
                     </Paper>
                 </Grid>

@@ -107,18 +107,20 @@ const UserListBoxComponent = () => {
                     )}
                   </TableCell>
                   <TableCell>
-                    <Box component="span" sx={{ 
+                    <Box component="span" sx={{
                       px: 1.5, py: 0.5, borderRadius: 1, fontSize: '0.75rem', fontWeight: 700,
-                      bgcolor: user.role === 'Admin' ? '#fff3e0' : '#e3f2fd',
-                      color: user.role === 'Admin' ? '#e65100' : '#1565c0'
+                      // Проверяем наличие 'Admin' в массиве
+                      bgcolor: user.role.includes('Admin') ? '#fff3e0' : '#e3f2fd',
+                      color: user.role.includes('Admin') ? '#e65100' : '#1565c0'
                     }}>
-                      {user.role}
+                      {/* Склеиваем массив в строку: "Student, Admin" */}
+                      {Array.isArray(user.role) ? user.role.join(', ') : user.role}
                     </Box>
                   </TableCell>
                   <TableCell align="right">
                     <Stack direction="row" spacing={1} justifyContent="flex-end">
                       {/* 1. Отправка сообщения в TG */}
-                      <SendTgMessageModal 
+                      <SendTgMessageModal
                         user={user}
                       />
 
@@ -147,9 +149,9 @@ const UserListBoxComponent = () => {
       </TableContainer>
 
       {/* Снэкбары для уведомлений */}
-      <Snackbar 
-        open={!!successMsg} 
-        autoHideDuration={4000} 
+      <Snackbar
+        open={!!successMsg}
+        autoHideDuration={4000}
         onClose={() => setSuccessMsg("")}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
@@ -158,9 +160,9 @@ const UserListBoxComponent = () => {
         </Alert>
       </Snackbar>
 
-      <Snackbar 
-        open={!!errorMsg} 
-        autoHideDuration={4000} 
+      <Snackbar
+        open={!!errorMsg}
+        autoHideDuration={4000}
         onClose={() => setErrorMsg("")}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
