@@ -12,6 +12,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  tableCellClasses,
   TableContainer,
   TableHead,
   TableRow,
@@ -34,14 +35,34 @@ import { Course, NewCourseDto } from "../../features/courses/type"
 import { fechTeachersList } from "../../features/teachers/teachersApi"
 import VisibilityIcon from "@mui/icons-material/Visibility"
 import CourseDetailModal from "./CourseDetailModal"
+import { styled } from "@mui/material/styles"
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}))
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}))
 
 const CourseBoxComponent = () => {
   const queryClient = useQueryClient()
-  
+
   // Состояния уведомлений
   const [successMsg, setSuccessMsg] = useState("")
   const [errorMsg, setErrorMsg] = useState("")
-  
+
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -107,13 +128,13 @@ const CourseBoxComponent = () => {
 
   const handleCreateCourse = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Подготовка данных: если цена 0, валюту можно не отправлять (или отправить null)
     const finalData = { ...courseData };
     if (finalData.priceAmount === 0) {
-        delete finalData.priceCurrency; 
+      delete finalData.priceCurrency;
     }
-    
+
     createCourseMutation.mutate(finalData)
   }
 
@@ -198,11 +219,11 @@ const CourseBoxComponent = () => {
               </div>
 
               <div className="col-12 text-end">
-                <Button 
-                    type="submit" 
-                    variant="contained" 
-                    disabled={createCourseMutation.isPending}
-                    startIcon={createCourseMutation.isPending && <CircularProgress size={20} />}
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={createCourseMutation.isPending}
+                  startIcon={createCourseMutation.isPending && <CircularProgress size={20} />}
                 >
                   Создать курс
                 </Button>
@@ -213,36 +234,56 @@ const CourseBoxComponent = () => {
       </Collapse>
 
       {/* Таблица */}
-      <TableContainer component={Paper} variant="outlined">
-        <Table sx={{ minWidth: 650 }}>
-          <TableHead sx={{ bgcolor: "action.hover" }}>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} size="small">
+          <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 700 }}>Название</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Цена</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Автор</TableCell>
-              <TableCell align="right" sx={{ fontWeight: 700 }}>Действия</TableCell>
+              <StyledTableCell>Название</StyledTableCell>
+              <StyledTableCell>Цена</StyledTableCell>
+              <StyledTableCell>Автор</StyledTableCell>
+              <StyledTableCell align="right">Действия</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {isCoursesLoading ? (
-              <TableRow><TableCell colSpan={4} align="center"><CircularProgress /></TableCell></TableRow>
+              <TableRow>
+                <TableCell colSpan={4} align="center">
+                  <CircularProgress />
+                </TableCell>
+              </TableRow>
             ) : (
-              courses?.map(course => (
-                <TableRow key={course.id} hover>
-                  <TableCell>{course.title}</TableCell>
-                  <TableCell>
-                    {course.priceAmount === 0 ? "Бесплатно" : `${course.priceAmount} ${course.priceCurrency || "RUB"}`}
-                  </TableCell>
-                  <TableCell>{teachersList?.find(t => t.id === course.authorId)?.name || "Неизвестен"}</TableCell>
-                  <TableCell align="right">
-                    <IconButton color="primary" onClick={() => { setSelectedCourseId(course.id.toString()); setIsModalOpen(true); }}>
-                      <VisibilityIcon />
-                    </IconButton>
-                    <IconButton color="error" onClick={() => deleteCourseMutation.mutate(course.id.toString())}>
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
+              courses?.map((course) => (
+                <StyledTableRow key={course.id}>
+                  <StyledTableCell sx={{ fontWeight: 600 }}>{course.title}</StyledTableCell>
+                  <StyledTableCell>
+                    {course.priceAmount === 0
+                      ? "Бесплатно"
+                      : `${course.priceAmount} ${course.priceCurrency || "RUB"}`}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {teachersList?.find((t) => t.id === course.authorId)?.name || "Неизвестен"}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+                      <IconButton
+                        color="primary"
+                        onClick={() => {
+                          setSelectedCourseId(course.id.toString())
+                          setIsModalOpen(true)
+                        }}
+                      >
+                        <VisibilityIcon />
+                      </IconButton>
+                      <IconButton
+                        color="error"
+                        onClick={() => deleteCourseMutation.mutate(course.id.toString())}
+                        disabled={deleteCourseMutation.isPending}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  </StyledTableCell>
+                </StyledTableRow>
               ))
             )}
           </TableBody>

@@ -144,7 +144,7 @@ export const VideoManagerComponent: React.FC<VideoManagerComponentProps> = ({
             </Box>
 
             <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 700 }}>
+                <Table sx={{ minWidth: 700 }} size="small">
                     <TableHead>
                         <TableRow>
                             <StyledTableCell>Название видео</StyledTableCell>

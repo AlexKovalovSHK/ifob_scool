@@ -69,9 +69,10 @@ const UserListBoxComponent = () => {
       </Box>
 
       <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
-        <Table sx={{ minWidth: 650 }}>
+        <Table sx={{ minWidth: 650 }} size="small">
           <TableHead sx={{ bgcolor: "action.hover" }}>
             <TableRow>
+              <TableCell sx={{ fontWeight: 700 }}>#</TableCell>
               <TableCell sx={{ fontWeight: 700 }}>ID</TableCell>
               <TableCell sx={{ fontWeight: 700 }}>Имя / Фамилия</TableCell>
               <TableCell sx={{ fontWeight: 700 }}>Email</TableCell>
@@ -88,8 +89,11 @@ const UserListBoxComponent = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              userList?.map(user => (
+              userList?.map((user, index) => (
                 <TableRow key={user.id} hover>
+                  <TableCell sx={{ color: 'text.secondary', fontSize: '0.85rem' }}>
+                    {index + 1}
+                  </TableCell>
                   <TableCell sx={{ color: 'text.secondary', fontSize: '0.85rem' }}>
                     {user.id.slice(-6)}
                   </TableCell>

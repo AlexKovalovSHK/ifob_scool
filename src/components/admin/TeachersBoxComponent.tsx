@@ -8,6 +8,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  tableCellClasses,
   TableContainer,
   TableHead,
   TableRow,
@@ -16,6 +17,7 @@ import {
   Snackbar,
   Alert
 } from "@mui/material"
+import { styled } from "@mui/material/styles"
 import DeleteIcon from "@mui/icons-material/Delete"
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline"
 import { useState } from "react"
@@ -27,6 +29,25 @@ import {
 } from "../../features/teachers/teachersApi"
 import UpdateTeacherModal from "../modals/UpdateTeacherModal"
 import { NewTeacherDto } from "../../features/teachers/type"
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}))
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}))
 
 const TeachersBoxComponent = () => {
   const queryClient = useQueryClient()
@@ -59,7 +80,7 @@ const TeachersBoxComponent = () => {
     onError: error =>
       setErrorMsg(
         "Ошибка при добавлении: " +
-          (error instanceof Error ? error.message : "Убедитесь, что email уникален"),
+        (error instanceof Error ? error.message : "Убедитесь, что email уникален"),
       ),
   })
 
@@ -133,7 +154,7 @@ const TeachersBoxComponent = () => {
                   required
                 />
               </div>
-              
+
               <div className="col-12">
                 <TextField
                   fullWidth
@@ -168,37 +189,42 @@ const TeachersBoxComponent = () => {
         </Paper>
       </Collapse>
 
-      <TableContainer component={Paper} variant="outlined">
-        <Table sx={{ minWidth: 650 }}>
-          <TableHead sx={{ bgcolor: "action.hover" }}>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} size="small">
+          <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 700 }}>Имя</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Email</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Специализация</TableCell>
-              <TableCell align="right" sx={{ fontWeight: 700 }}>Действия</TableCell>
+              <StyledTableCell>Имя</StyledTableCell>
+              <StyledTableCell>Email</StyledTableCell>
+              <StyledTableCell>Специализация</StyledTableCell>
+              <StyledTableCell align="right">Действия</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {isTeachersLoading ? (
               <TableRow>
-                <TableCell colSpan={4} align="center"><CircularProgress /></TableCell>
+                <TableCell colSpan={4} align="center">
+                  <CircularProgress />
+                </TableCell>
               </TableRow>
             ) : (
               teachersList?.map(teacher => (
-                <TableRow key={teacher.id} hover>
-                  <TableCell>{teacher.name}</TableCell>
-                  <TableCell>{teacher.email}</TableCell>
-                  <TableCell>{teacher.specialization}</TableCell>
-                  <TableCell align="right">
-                    <UpdateTeacherModal teacher={teacher}/>
-                    <IconButton
-                      color="error"
-                      onClick={() => deleteTeacherMutation.mutate(teacher.id.toString())}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
+                <StyledTableRow key={teacher.id}>
+                  <StyledTableCell sx={{ fontWeight: 600 }}>{teacher.name}</StyledTableCell>
+                  <StyledTableCell>{teacher.email}</StyledTableCell>
+                  <StyledTableCell>{teacher.specialization}</StyledTableCell>
+                  <StyledTableCell align="right">
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+                      <UpdateTeacherModal teacher={teacher} />
+                      <IconButton
+                        color="error"
+                        onClick={() => deleteTeacherMutation.mutate(teacher.id.toString())}
+                        disabled={deleteTeacherMutation.isPending}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                  </StyledTableCell>
+                </StyledTableRow>
               ))
             )}
           </TableBody>
