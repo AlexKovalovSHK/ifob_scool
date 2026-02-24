@@ -34,8 +34,10 @@ import TeachersBoxComponent from "./TeachersBoxComponent"
 import CourseBoxComponent from "./CourseBoxComponent"
 import UserListBoxComponent from "./UserListBoxComponent"
 import { MetricsComp } from "./MetricsComp"
+import { VideoManagerComponent } from "./VideoManagerComponent"
 import api from "../../features/auth/api"
 import AnalyticsIcon from "@mui/icons-material/Analytics"
+import VideoLibraryIcon from "@mui/icons-material/VideoLibrary"
 import { useState } from "react"
 import { useAppSelector } from "../../app/hooks"
 import { selectUser } from "../../features/users/userSlice"
@@ -108,7 +110,7 @@ export default function AdminComponent() {
   const [successMsg, setSuccessMsg] = useState("")
   const [errorMsg, setErrorMsg] = useState("")
   const [showCreateForm, setShowCreateForm] = useState(false)
-  const [currentTab, setCurrentTab] = useState<"courses" | "teachers" | "users" | "metrics">(
+  const [currentTab, setCurrentTab] = useState<"courses" | "teachers" | "users" | "metrics" | "videos">(
     "courses",
   )
 
@@ -165,7 +167,9 @@ export default function AdminComponent() {
                 ? "Админ: Преподаватели"
                 : currentTab === "metrics"
                   ? "Админ: Аналитика"
-                  : "Админ: Пользователи"}
+                  : currentTab === "videos"
+                    ? "Админ: Видеоуроки"
+                    : "Админ: Пользователи"}
           </Typography>
 
           <Button
@@ -278,6 +282,23 @@ export default function AdminComponent() {
               <ListItemText primary="Аналитика" />
             </ListItemButton>
           </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton
+              selected={currentTab === "videos"}
+              onClick={() => {
+                setCurrentTab("videos")
+                setOpen(false)
+                setShowCreateForm(false)
+              }}
+            >
+              <ListItemIcon>
+                <VideoLibraryIcon
+                  color={currentTab === "videos" ? "primary" : "inherit"}
+                />
+              </ListItemIcon>
+              <ListItemText primary="Видеоуроки" />
+            </ListItemButton>
+          </ListItem>
         </List>
       </Drawer>
       <Main open={open}>
@@ -289,6 +310,11 @@ export default function AdminComponent() {
             <TeachersBoxComponent />
           ) : currentTab === "metrics" ? (
             <MetricsComp />
+          ) : currentTab === "videos" ? (
+            <VideoManagerComponent
+              onSuccess={(msg) => setSuccessMsg(msg)}
+              onError={(msg) => setErrorMsg(msg)}
+            />
           ) : (
             <UserListBoxComponent />
           )}

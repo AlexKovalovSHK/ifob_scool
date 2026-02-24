@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import api from '../../features/auth/api';
 import {
     Container, Typography, Box, Paper, Avatar, Grid, Button,
     TextField, Divider, Stack, Card, CardContent, Tab, Tabs,
@@ -16,10 +18,18 @@ import { UserUpdate, TelegramAuthData } from '../../features/users/type';
 import TelegramLogin from '../auth/TelegramLogin';
 import ChangePasswordModal from '../modals/ChangePasswordModal';
 
-import { useAppSelector, useAppDispatch } from '../../app/hooks'; // Добавлен dispatch
+import { useAppSelector, useAppDispatch } from '../../app/hooks';
 import { selectUser, selectUserStatus, fetchUser, updateUserProfile } from '../../features/users/userSlice';
 import { generateRandImgUrl } from '../../utils/utils';
 import { useNavigate } from 'react-router-dom';
+
+interface VideoItem {
+    _id: string
+    title: string
+    description: string
+    videoUrl: string
+    createdAt: string
+}
 
 export const UserCabinet = () => {
     const navigate = useNavigate();
@@ -35,7 +45,14 @@ export const UserCabinet = () => {
     // Состояние для редактирования (инициализируем пустым, наполним в useEffect)
     const [editedUser, setEditedUser] = useState<UserUpdate | null>(null);
     const [purchasedCourses, setPurchasedCourses] = useState<any[]>([]);
-    const [videoList, setVideoList] = useState<any[]>([]);
+
+    const { data: videoList = [], isLoading: videosLoading } = useQuery<VideoItem[]>({
+        queryKey: ['videos'],
+        queryFn: async () => {
+            const res = await api.get<VideoItem[]>('/videos')
+            return res.data
+        }
+    });
 
     const isLocalhost = window.location.hostname === 'localhost';
     const isAdmin = user?.role?.includes("Admin");
@@ -72,12 +89,7 @@ export const UserCabinet = () => {
         ]);
     }, []);
 
-    useEffect(() => {
-        fetch('/videoList.json')
-            .then(res => res.json())
-            .then(data => setVideoList(data))
-            .catch(err => console.error("Error fetching video list:", err));
-    }, []);
+
 
     // 4. Привязка Telegram через асинхронный экшен
     const handleTelegramAuth = (tgUser: TelegramAuthData) => {
@@ -290,50 +302,56 @@ export const UserCabinet = () => {
                             )}
 
                             {tabValue === 1 && (
-                                <Grid container spacing={3}>
-                                    {videoList.map((video) => (
-                                        <Grid size={{ xs: 12, sm: 6 }} key={video.id}>
-                                            <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
-                                                <Box sx={{ position: 'relative', pt: '56.25%' }}>
-                                                    <Avatar
-                                                        src={generateRandImgUrl(400, 225, `video-${video.id}`)}
-                                                        variant="square"
-                                                        sx={{
+                                videosLoading ? (
+                                    <Box display="flex" justifyContent="center" py={4}>
+                                        <CircularProgress />
+                                    </Box>
+                                ) : (
+                                    <Grid container spacing={3}>
+                                        {videoList.map((video) => (
+                                            <Grid size={{ xs: 12, sm: 6 }} key={video._id}>
+                                                <Card variant="outlined" sx={{ borderRadius: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+                                                    <Box sx={{ position: 'relative', pt: '56.25%' }}>
+                                                        <Avatar
+                                                            src={generateRandImgUrl(400, 225, `video-${video._id}`)}
+                                                            variant="square"
+                                                            sx={{
+                                                                position: 'absolute',
+                                                                top: 0,
+                                                                left: 0,
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                borderRadius: '3px 3px 0 0'
+                                                            }}
+                                                        />
+                                                        <Box sx={{
                                                             position: 'absolute',
-                                                            top: 0,
-                                                            left: 0,
-                                                            width: '100%',
-                                                            height: '100%',
-                                                            borderRadius: '3px 3px 0 0'
-                                                        }}
-                                                    />
-                                                    <Box sx={{
-                                                        position: 'absolute',
-                                                        top: '50%',
-                                                        left: '50%',
-                                                        transform: 'translate(-50%, -50%)',
-                                                        bgcolor: 'rgba(0,0,0,0.4)',
-                                                        borderRadius: '50%',
-                                                        p: 1
-                                                    }}>
-                                                        <PlayArrowIcon sx={{ color: 'white', fontSize: 40 }} />
+                                                            top: '50%',
+                                                            left: '50%',
+                                                            transform: 'translate(-50%, -50%)',
+                                                            bgcolor: 'rgba(0,0,0,0.4)',
+                                                            borderRadius: '50%',
+                                                            p: 1
+                                                        }}>
+                                                            <PlayArrowIcon sx={{ color: 'white', fontSize: 40 }} />
+                                                        </Box>
                                                     </Box>
-                                                </Box>
-                                                <CardContent sx={{ flexGrow: 1 }}>
-                                                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>{video.title}</Typography>
-                                                    <Typography variant="body2" color="text.secondary">{video.description}</Typography>
-                                                    <Button
-                                                        variant="text"
-                                                        sx={{ mt: 2, p: 0, textTransform: 'none' }}
-                                                        onClick={() => window.open(video.url, '_blank')}
-                                                    >
-                                                        Смотреть
-                                                    </Button>
-                                                </CardContent>
-                                            </Card>
-                                        </Grid>
-                                    ))}
-                                </Grid>
+                                                    <CardContent sx={{ flexGrow: 1 }}>
+                                                        <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>{video.title}</Typography>
+                                                        <Typography variant="body2" color="text.secondary">{video.description}</Typography>
+                                                        <Button
+                                                            variant="text"
+                                                            sx={{ mt: 2, p: 0, textTransform: 'none' }}
+                                                            onClick={() => navigate(`/video-player/${video._id}`)}
+                                                        >
+                                                            Смотреть
+                                                        </Button>
+                                                    </CardContent>
+                                                </Card>
+                                            </Grid>
+                                        ))}
+                                    </Grid>
+                                )
                             )}
                         </Box>
                     </Paper>

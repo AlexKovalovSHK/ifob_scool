@@ -18,6 +18,7 @@ import {
   trackPageExit,
   trackPageView,
 } from "./features/analytics/analytics.service"
+import { VideoPlayerPage } from "./components/VideoPlayerPage"
 
 //trackPageView(location.pathname + location.search);
 
@@ -71,6 +72,7 @@ export const App = () => {
           <Route path="/auth/tg-callback" element={<TgCallbackPage />} />
           <Route path="/admin" element={<AdminComponent />}/>
           <Route path="*" element={<Courses />} />
+          <Route path="/video-player/:id" element={<VideoPlayerPage />} />
         </Routes>
       </div>
       <Footer />
