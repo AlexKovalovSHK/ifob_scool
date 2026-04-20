@@ -93,7 +93,7 @@ export const userApi = {
     },
 
     async linkTelegram(tgData: TelegramAuthData): Promise<User> {
-        const response = await $api.patch<User>(`/users/link-telegram`, tgData);
+        const response = await $api.post<User>(`/auth/link-telegram`, tgData);
         return response.data;
     },
 
