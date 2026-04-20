@@ -299,6 +299,25 @@ export default function AdminComponent() {
               <ListItemText primary="Видеоуроки" />
             </ListItemButton>
           </ListItem>
+
+          <ListItem disablePadding>
+            <ListItemButton
+              selected={currentTab === "videos"}
+              onClick={() => {
+                setCurrentTab("videos")
+                setOpen(false)
+                setShowCreateForm(false)
+              }}
+            >
+              <ListItemIcon>
+                <VideoLibraryIcon
+                  color={currentTab === "videos" ? "primary" : "inherit"}
+                />
+              </ListItemIcon>
+              <ListItemText primary="ЦВШМ" />
+            </ListItemButton>
+          </ListItem>
+
         </List>
       </Drawer>
       <Main open={open}>

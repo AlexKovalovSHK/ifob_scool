@@ -78,6 +78,11 @@ export const userApi = {
         return response.data;
     },
 
+    async registerStudent(data: any): Promise<AuthResponse> {
+        const response = await $api.post<AuthResponse>('/users/register-student', data);
+        return response.data;
+    },
+
     updateProfile: async (data: UserUpdate) => {
         if (!data.id) {
             console.error("Попытка обновить пользователя без ID!", data);

@@ -25,7 +25,6 @@ import { VideoPlayerPage } from "./components/VideoPlayerPage"
 export const App = () => {
   const isDev = import.meta.env.VITE_IS_DEV === "true"
   const location = useLocation()
-  const pageStartTime = useRef(Date.now())
 
   const currentPathRef = useRef(location.pathname + location.search)
   const startTimeRef = useRef(Date.now())

@@ -24,7 +24,21 @@ export interface UserRegister {
     password: string;
     phone?: string; // необязательно, если не спрашиваете сразу
     telegramUsername?: string;
+    role: any;
+    academicInfo?: AcademicInfo
 }
+
+export interface AcademicInfo {
+    subdivision: string,
+    course: number,
+    sessionNumber: string,
+    enrollmentDate: string
+}
+
+interface FormState extends Omit<UserRegister, 'role' | 'academicInfo'> {
+    course: number;
+    sessionNumber: string;
+  }
 
 // Для обновления профиля (включая привязку Telegram)
 export interface UserUpdate {
